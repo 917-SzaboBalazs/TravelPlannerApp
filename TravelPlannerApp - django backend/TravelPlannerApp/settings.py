@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     "172.30.117.16",
     "192.168.93.102",
     "127.0.0.1",
-    "34.106.170.165"
+    "34.106.170.165",
 ]
 
 
@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'Trip'
+    'rest_framework_swagger',
+    'Trip',
 ]
 
 MIDDLEWARE = [

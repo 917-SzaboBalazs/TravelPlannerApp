@@ -15,8 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.views.generic import TemplateView
+from rest_framework.schemas import get_schema_view
+from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
+    path('', include('Trip.urls'), name="trips"),
+
     path('admin/', admin.site.urls),
-    path('', include('Trip.urls')),
+    path('openapi/', get_schema_view(title="Travel Planner App API"), name="openapi"),
+    path('docs/', TemplateView.as_view(
+        template_name='docs.html',
+        extra_context={'schema_url': 'openapi'}
+    ), name='swagger-ui'),
 ]
