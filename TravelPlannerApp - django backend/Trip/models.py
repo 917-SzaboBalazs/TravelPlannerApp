@@ -13,7 +13,7 @@ class AccommodationType(models.Model):
 
 class Accommodation(models.Model):
 
-    type = models.ForeignKey(to=AccommodationType, on_delete=models.PROTECT, related_name="accom_ids")
+    type = models.ForeignKey(to=AccommodationType, on_delete=models.PROTECT)
     name = models.CharField(max_length=60)
     no_stars = models.IntegerField(null=True, blank=True)
     location = models.CharField(max_length=150, null=True, blank=True)
@@ -54,7 +54,7 @@ class Transportation(models.Model):
     )
 
     name = models.CharField(max_length=60)
-    type = models.ForeignKey(to=TransportationType, on_delete=models.PROTECT, related_name="transport_ids")
+    type = models.ForeignKey(to=TransportationType, on_delete=models.PROTECT)
     price = models.FloatField(null=True, blank=True)
     speed = models.CharField(max_length=10, choices=SPEED_CHOICES, null=True, blank=True)
     comfort_level = models.IntegerField(null=True, blank=True)
@@ -80,10 +80,10 @@ class Trip(models.Model):
     destination = models.CharField(max_length=60, null=True, blank=True)
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
-    accommodations = models.ManyToManyField(to=Accommodation, blank=True, related_name="accommodations")
+    accommodations = models.ManyToManyField(to=Accommodation, blank=True)
     budget = models.FloatField(null=True, blank=True)
-    activities = models.ManyToManyField(to=Activity, blank=True, related_name="activities")
-    transportations = models.ManyToManyField(to=Transportation, blank=True, related_name="transportations")
+    activities = models.ManyToManyField(to=Activity, blank=True)
+    transportations = models.ManyToManyField(to=Transportation, blank=True)
     notes = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):

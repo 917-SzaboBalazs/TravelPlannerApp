@@ -9,19 +9,6 @@ from Trip.reports import AverageDurationOfTripsInDays, TripsTotalPriceOfActiviti
 # ================== Model serializers ===========================
 
 
-class AccommodationTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AccommodationType
-        fields = "__all__"
-
-
-class TransportationTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = TransportationType
-        fields = "__all__"
-
-
 class TripListSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -44,7 +31,7 @@ class TripDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trip
         fields = "__all__"
-        depth = 1
+        depth = 2
 
     def validate(self, data):
 
@@ -57,12 +44,26 @@ class TripDetailSerializer(serializers.ModelSerializer):
         return data
 
 
+class AccommodationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccommodationType
+        fields = "__all__"
+
+
+class TransportationTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TransportationType
+        fields = "__all__"
+
+
 class AccommodationSerializer(serializers.ModelSerializer):
-    type_id = serializers.IntegerField()
+    type_id = serializers.PrimaryKeyRelatedField(queryset=AccommodationType.objects.all(), write_only=True)
 
     class Meta:
         model = Accommodation
-        fields = ["id", "type_id", "name", "no_stars", "location", "price_per_night", "check_in_time", "check_out_time"]
+        fields = "__all__"
+        depth = 1
 
     def validate(self, data):
         if data["no_stars"] is not None and (data["no_stars"] < 1 or data["no_stars"] > 5):
@@ -73,13 +74,29 @@ class AccommodationSerializer(serializers.ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+
+        accommodation = Accommodation.objects.create(**validated_data)
+        accommodation.save()
+
+        return accommodation
+
+    def update(self, instance, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+        [setattr(instance, k, v) for k, v in validated_data.items()]
+        instance.save()
+
+        return instance
+
 
 class TransportationSerializer(serializers.ModelSerializer):
-    type_id = serializers.IntegerField()
+    type_id = serializers.PrimaryKeyRelatedField(queryset=TransportationType.objects.all(), write_only=True)
 
     class Meta:
         model = Transportation
-        fields = ["id", "name", "type_id", "price", "speed", "comfort_level", ]
+        fields = "__all__"
+        depth = 1
 
     def validate(self, data):
 
@@ -90,6 +107,21 @@ class TransportationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("comfort level must be between 1 and 5")
 
         return data
+
+    def create(self, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+
+        transportation = Transportation.objects.create(**validated_data)
+        transportation.save()
+
+        return transportation
+
+    def update(self, instance, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+        [setattr(instance, k, v) for k, v in validated_data.items()]
+        instance.save()
+
+        return instance
 
 
 class ActivitySerializer(serializers.ModelSerializer):

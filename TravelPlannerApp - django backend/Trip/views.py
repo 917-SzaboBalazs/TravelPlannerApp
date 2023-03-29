@@ -48,6 +48,17 @@ class RetrieveUpdateDestroyTripView(RetrieveUpdateDestroyAPIView):
 
 # ============== Accommodation =================
 
+
+class ListCreateAccommodationView(ListCreateAPIView):
+    queryset = Accommodation.objects.all()
+    serializer_class = AccommodationSerializer
+
+
+class RetrieveUpdateDestroyAccommodationView(RetrieveUpdateDestroyAPIView):
+    queryset = Accommodation.objects.all()
+    serializer_class = AccommodationSerializer
+
+
 class ListAddAccommodationView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -55,6 +66,11 @@ class ListAddAccommodationView(APIView):
 
         try:
             queryset = Trip.objects.get(id=trip_id).accommodations.values()
+
+            for query in queryset:
+                query['type'] = AccommodationType.objects.get(id=query['type_id'])
+                del query['type_id']
+
             serializer = AccommodationSerializer(queryset, many=True)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -68,8 +84,7 @@ class ListAddAccommodationView(APIView):
             accommodation = Accommodation.objects.get(id=request.data['accommodation_id'])
 
             Trip.objects.get(id=trip_id).accommodations.add(accommodation.id)
-            queryset = Trip.objects.get(id=trip_id).accommodations
-            serializer = AccommodationSerializer(queryset, many=True)
+            serializer = AccommodationSerializer(accommodation)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except (Trip.DoesNotExist, Accommodation.DoesNotExist) as dne:
@@ -85,10 +100,7 @@ class RemoveAccommodationFromTripView(APIView):
         try:
             Trip.objects.get(id=trip_id).accommodations.remove(Accommodation.objects.get(id=accommodation_id))
 
-            queryset = Trip.objects.get(id=trip_id).accommodations
-            serializer = AccommodationSerializer(queryset, many=True)
-
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Trip.DoesNotExist as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
@@ -111,6 +123,17 @@ class RemoveAccommodationFromTripView(APIView):
 
 # ============== Transportation views =================
 
+
+class ListCreateTransportationView(ListCreateAPIView):
+    queryset = Transportation.objects.all()
+    serializer_class = TransportationSerializer
+
+
+class RetrieveUpdateDestroyTransportationView(RetrieveUpdateDestroyAPIView):
+    queryset = Transportation.objects.all()
+    serializer_class = TransportationSerializer
+
+
 class ListAddTransportationView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -118,7 +141,11 @@ class ListAddTransportationView(APIView):
 
         try:
             queryset = Trip.objects.get(id=trip_id).transportations.values()
-            print(queryset)
+
+            for query in queryset:
+                query['type'] = TransportationType.objects.get(id=query['type_id'])
+                del query['type_id']
+
             serializer = TransportationSerializer(queryset, many=True)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
@@ -132,8 +159,7 @@ class ListAddTransportationView(APIView):
             transportation = Transportation.objects.get(id=request.data['transportation_id'])
 
             Trip.objects.get(id=trip_id).transportations.add(transportation.id)
-            queryset = Trip.objects.get(id=trip_id).transportations
-            serializer = TransportationSerializer(queryset, many=True)
+            serializer = TransportationSerializer(transportation)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except (Trip.DoesNotExist, Transportation.DoesNotExist) as dne:
@@ -149,15 +175,12 @@ class RemoveTransportationFromTripView(APIView):
         try:
             Trip.objects.get(id=trip_id).transportations.remove(Transportation.objects.get(id=transportation_id))
 
-            queryset = Trip.objects.get(id=trip_id).transportations
-            serializer = TransportationSerializer(queryset, many=True)
-
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Trip.DoesNotExist as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, *arg, **kwargs):
+    def get(self, request, *args, **kwargs):
         trip_id = self.kwargs.get('pk')
         transportation_id = self.kwargs.get('transport_id')
 
@@ -174,6 +197,16 @@ class RemoveTransportationFromTripView(APIView):
 
 
 # ====================== Activity views ================
+
+
+class ListCreateActivityView(ListCreateAPIView):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
+
+
+class RetrieveUpdateDestroyActivityView(RetrieveUpdateDestroyAPIView):
+    queryset = Activity.objects.all()
+    serializer_class = ActivitySerializer
 
 
 class ListAddActivityView(APIView):
@@ -193,11 +226,10 @@ class ListAddActivityView(APIView):
         trip_id = self.kwargs.get('pk')
 
         try:
-            activities = Activity.objects.get(id=request.data['activity_id'])
+            activity = Activity.objects.get(id=request.data['activity_id'])
 
-            Trip.objects.get(id=trip_id).activities.add(activities.id)
-            queryset = Trip.objects.get(id=trip_id).activities
-            serializer = ActivitySerializer(queryset, many=True)
+            Trip.objects.get(id=trip_id).activities.add(activity.id)
+            serializer = ActivitySerializer(activity)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
         except (Trip.DoesNotExist, Activity.DoesNotExist) as dne:
@@ -213,15 +245,12 @@ class RemoveActivityFromTripView(APIView):
         try:
             Trip.objects.get(id=trip_id).activities.remove(Activity.objects.get(id=activity_id))
 
-            queryset = Trip.objects.get(id=trip_id).activities
-            serializer = ActivitySerializer(queryset, many=True)
-
-            return Response(data=serializer.data, status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
         except Trip.DoesNotExist as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
 
-    def get(self, request, *arg, **kwargs):
+    def get(self, request, *args, **kwargs):
         trip_id = self.kwargs.get('pk')
         activity_id = self.kwargs.get('act_id')
 
