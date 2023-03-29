@@ -8,11 +8,61 @@ from Trip.reports import AverageDurationOfTripsInDays, TripsTotalPriceOfActiviti
 
 # ================== Model serializers ===========================
 
+
+class AccommodationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccommodationType
+        fields = "__all__"
+
+
+class TransportationTypeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TransportationType
+        fields = "__all__"
+
+
+class TripListSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Trip
+        fields = ["id", "name", "destination", "start_date", "end_date", "budget", "notes", ]
+
+    def validate(self, data):
+
+        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
+
+        if data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
+
+        return data
+
+
+class TripDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Trip
+        fields = "__all__"
+        depth = 1
+
+    def validate(self, data):
+
+        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
+
+        if data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
+
+        return data
+
+
 class AccommodationSerializer(serializers.ModelSerializer):
+    type_id = serializers.IntegerField()
 
     class Meta:
         model = Accommodation
-        fields = "__all__"
+        fields = ["id", "type_id", "name", "no_stars", "location", "price_per_night", "check_in_time", "check_out_time"]
 
     def validate(self, data):
         if data["no_stars"] is not None and (data["no_stars"] < 1 or data["no_stars"] > 5):
@@ -24,12 +74,22 @@ class AccommodationSerializer(serializers.ModelSerializer):
         return data
 
 
-class AccommodationTypeSerializer(serializers.ModelSerializer):
-    accom_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class TransportationSerializer(serializers.ModelSerializer):
+    type_id = serializers.IntegerField()
 
     class Meta:
-        model = AccommodationType
-        fields = "__all__"
+        model = Transportation
+        fields = ["id", "name", "type_id", "price", "speed", "comfort_level", ]
+
+    def validate(self, data):
+
+        if data["price"] is not None and data["price"] < 0.:
+            raise serializers.ValidationError("price must be a non-negative float number")
+
+        if data["comfort_level"] is not None and (data["comfort_level"] < 1 or data["comfort_level"] > 5):
+            raise serializers.ValidationError("comfort level must be between 1 and 5")
+
+        return data
 
 
 class ActivitySerializer(serializers.ModelSerializer):
@@ -47,47 +107,6 @@ class ActivitySerializer(serializers.ModelSerializer):
 
         return data
 
-
-class TransportationSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Transportation
-        fields = "__all__"
-
-    def validate(self, data):
-
-        if data["price"] is not None and data["price"] < 0.:
-            raise serializers.ValidationError("price must be a non-negative float number")
-
-        if data["comfort_level"] is not None and (data["comfort_level"] < 1 or data["comfort_level"] > 5):
-            raise serializers.ValidationError("comfort level must be between 1 and 5")
-
-        return data
-
-
-class TransportationTypeSerializer(serializers.ModelSerializer):
-    transport_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = TransportationType
-        fields = "__all__"
-
-
-class TripSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Trip
-        fields = "__all__"
-
-    def validate(self, data):
-
-        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
-            raise serializers.ValidationError("finish must occur after start")
-
-        if data["budget"] is not None and data["budget"] < 0.:
-            raise serializers.ValidationError("budget must be a non-negative float number")
-
-        return data
 
 # ==============================================================
 
