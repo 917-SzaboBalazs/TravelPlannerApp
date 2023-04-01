@@ -15,7 +15,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from "react-router-dom";
 
 const pages = [
-  {'name': 'Trips', 'path': '/trips'}
+  {'name': 'Trips', 'path': '/trips/'}
 ];
 const settings = [];
 
@@ -92,7 +92,9 @@ function ResponsiveNavigationBar() {
             >
               {pages.map((page) => (
                 <MenuItem key={page.name} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page.name}</Typography>
+                  <Typography textAlign="center">
+                    <Link to={page.path} className="nav-link-burger">{page.name}</Link>
+                  </Typography>
                 </MenuItem>
               ))}
             </Menu>

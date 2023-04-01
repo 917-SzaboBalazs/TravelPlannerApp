@@ -1,6 +1,6 @@
 import React from 'react';
-import './css/layout.css'
-import { Outlet, Link } from "react-router-dom";
+import './layout.css'
+import { Outlet } from "react-router-dom";
 import ResponsiveNavigationBar from '../components/layout/responsiveNavigationBar'
 
 const Layout = () => {

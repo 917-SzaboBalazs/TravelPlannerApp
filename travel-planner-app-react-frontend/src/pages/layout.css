@@ -1,0 +1,21 @@
+.nav-link {
+    text-decoration: none;
+    font-size: 16px;
+    color: white;
+    transition: color 0.2s;
+}
+
+.nav-link:hover {
+    color:  rgb(148, 164, 178);
+}
+
+.nav-link-burger {
+    text-decoration: none;
+    font-size: 16px;
+    color: rgb(40, 40, 44);
+    transition: color 0.2s;
+}
+
+.nav-link-burger:hover {
+    color:  rgb(97, 108, 118);
+}

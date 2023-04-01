@@ -13,14 +13,15 @@ class TripListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trip
-        fields = ["id", "name", "destination", "start_date", "end_date", "budget", "notes", ]
+        fields = "__all__"
 
     def validate(self, data):
 
-        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
             raise serializers.ValidationError("finish must occur after start")
 
-        if data["budget"] is not None and data["budget"] < 0.:
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
             raise serializers.ValidationError("budget must be a non-negative float number")
 
         return data
@@ -35,10 +36,11 @@ class TripDetailSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
 
-        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
             raise serializers.ValidationError("finish must occur after start")
 
-        if data["budget"] is not None and data["budget"] < 0.:
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
             raise serializers.ValidationError("budget must be a non-negative float number")
 
         return data
