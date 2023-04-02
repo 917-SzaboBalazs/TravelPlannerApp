@@ -72,13 +72,13 @@ const TripDetails = () => {
                         </Box>
 
                         <Box component="div" align="center">
-                            <h4>Activities</h4>
-                            {details.activities.map((item) => <p key={item.id}>{item.name}</p>)}
+                            <h4>Transportations</h4>
+                            {details.transportations.map((item) => <p key={item.id}>{item.name}</p>)}
                         </Box>
 
                         <Box component="div" align="center">
-                            <h4>Transportations</h4>
-                            {details.transportations.map((item) => <p key={item.id}>{item.name}</p>)}
+                            <h4>Activities</h4>
+                            {details.activities.map((item) => <p key={item.id}>{item.name}</p>)}
                         </Box>
                     </Box>
             </Box>

@@ -8,57 +8,6 @@ from Trip.reports import AverageDurationOfTripsInDays, TripsTotalPriceOfActiviti
 
 # ================== Model serializers ===========================
 
-
-class TripListSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Trip
-        fields = "__all__"
-
-    def validate(self, data):
-
-        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
-                is not None and data["start_date"] > data["end_date"]:
-            raise serializers.ValidationError("finish must occur after start")
-
-        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
-            raise serializers.ValidationError("budget must be a non-negative float number")
-
-        return data
-
-
-class TripDetailSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Trip
-        fields = "__all__"
-        depth = 2
-
-    def validate(self, data):
-
-        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
-                is not None and data["start_date"] > data["end_date"]:
-            raise serializers.ValidationError("finish must occur after start")
-
-        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
-            raise serializers.ValidationError("budget must be a non-negative float number")
-
-        return data
-
-
-class AccommodationTypeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AccommodationType
-        fields = "__all__"
-
-
-class TransportationTypeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = TransportationType
-        fields = "__all__"
-
-
 class AccommodationSerializer(serializers.ModelSerializer):
     type_id = serializers.PrimaryKeyRelatedField(queryset=AccommodationType.objects.all(), write_only=True)
 
@@ -127,7 +76,6 @@ class TransportationSerializer(serializers.ModelSerializer):
 
 
 class ActivitySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Activity
         fields = "__all__"
@@ -142,25 +90,82 @@ class ActivitySerializer(serializers.ModelSerializer):
         return data
 
 
+class TripListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trip
+        fields = ["id", "name", "destination", "start_date", "end_date", "budget", "notes", "accommodations",
+                  "transportations", "activities", ]
+
+    def validate(self, data):
+
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
+
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
+
+        return data
+
+
+class TripDetailSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Trip
+        fields = ["name", "destination", "start_date", "end_date", "budget", "notes", "transportations", "activities",
+                  "accommodations", ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        method = self.context['method']
+
+        if method == "GET":
+            self.Meta.depth = 2
+        else:
+            self.Meta.depth = 0
+
+    def validate(self, data):
+
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
+
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
+
+        return data
+
+
+class AccommodationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccommodationType
+        fields = "__all__"
+
+
+class TransportationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TransportationType
+        fields = "__all__"
+
+
 # ==============================================================
 
 # ================== DTO serializers ===========================
 
 
 class AverageDurationOfTripsInDaysSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = AverageDurationOfTripsInDays
 
 
 class TripsTotalPriceOfActivitiesSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = TripsTotalPriceOfActivities
 
 
 class TripsBasedOnAverageComfortOfTransportationsSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = TripsBasedOnAverageComfortOfTransportations
 

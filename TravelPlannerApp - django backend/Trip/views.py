@@ -21,7 +21,6 @@ from Trip.serializers import TripListSerializer, ActivitySerializer, \
 
 
 class ListCreateTripView(ListCreateAPIView):
-    serializer_class = TripListSerializer
 
     def get_queryset(self):
         """
@@ -37,10 +36,18 @@ class ListCreateTripView(ListCreateAPIView):
 
         return queryset
 
+    def get_serializer_class(self):
+        return TripListSerializer
+
 
 class RetrieveUpdateDestroyTripView(RetrieveUpdateDestroyAPIView):
     queryset = Trip.objects.all()
     serializer_class = TripDetailSerializer
+
+    def get_serializer_context(self):
+        return {
+            'method': self.request.method
+        }
 
 
 # ============================================

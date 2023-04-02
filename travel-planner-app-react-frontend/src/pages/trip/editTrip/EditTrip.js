@@ -2,6 +2,7 @@ import { Button, Container, Input, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
+import MultipleSelectChip from '../../../components/trip/MultipleSelectChip';
 
 const EditTrip = () => {
 
@@ -12,7 +13,29 @@ const EditTrip = () => {
     const [budget, setBudget] = useState(undefined);
     const [notes, setNotes] = useState("");
 
+    const [accommodations, setAccommodations] = useState([]);
+    const [selectedAccommodations, setSelectedAccommodations] = useState([]);
+
+    const [transportations, setTransportations] = useState([]);
+    const [selectedTransportations, setSelectedTransportations] = useState([]);
+
+    const [activities, setActivities] = useState([]);
+    const [selectedActivities, setSelectedActivities] = useState([]);
+
+
     const navigate = useNavigate();
+
+    const handleSelectedAccommodations = (accommodations) => {
+        setSelectedAccommodations(accommodations);
+    };
+
+    const handleSelectedTransformations = (transformations) => {
+        setSelectedTransportations(transformations);
+    };
+
+    const handleSelectedActivities = (activities) => {
+        setSelectedActivities(activities);
+    };
 
     const tripId = useParams().tripId;
 
@@ -20,12 +43,50 @@ const EditTrip = () => {
         axiosInstance
             .get('/trips/' + tripId + '/')
             .then((res) => {
+
                 setName(res.data.name);
                 setDestination(res.data.destination);
                 setStartDate(res.data.start_date);
                 setEndDate(res.data.end_date);
                 setBudget(res.data.budget);
                 setNotes(res.data.notes);
+                
+                setSelectedAccommodations(res.data.accommodations.map(item => item.name));
+                setSelectedTransportations(res.data.transportations.map(item => item.name));
+                setSelectedActivities(res.data.activities.map(item => item.name));
+            })
+            .catch((err) => {
+                alert(err);
+            });
+    };
+
+    const LoadAccommodations = () => {
+        axiosInstance
+            .get('accommodations/')
+            .then((res) => {
+                setAccommodations(res.data);
+            })
+            .catch((err) => {
+                alert(err);
+            });
+    };
+
+    const LoadTransportations = () => {
+        axiosInstance
+            .get('transportations/')
+            .then((res) => {
+                setTransportations(res.data);
+            })
+            .catch((err) => {
+                alert(err);
+            });
+    };
+
+    const LoadActivities = () => {
+        axiosInstance
+            .get('activities/')
+            .then((res) => {
+                setActivities(res.data);
             })
             .catch((err) => {
                 alert(err);
@@ -34,10 +95,41 @@ const EditTrip = () => {
 
     useEffect(() => {
         LoadTrip();
+
+        LoadAccommodations();
+        LoadTransportations();
+        LoadActivities();
     }, []);
 
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        const accommodationIds = [];
+
+        for (var i = 0; i < selectedAccommodations.length; i++)
+        {
+            const index = accommodations.map(el => el.name).indexOf(selectedAccommodations[i]);
+            const id = accommodations[index].id;
+            accommodationIds.push(id);
+        }
+
+        const transportationIds= [];
+
+        for (var i = 0; i < selectedTransportations.length; i++)
+        {
+            const index = transportations.map(el => el.name).indexOf(selectedTransportations[i]);
+            const id = transportations[index].id;
+            transportationIds.push(id);
+        }
+        
+        const activityIds = [];
+
+        for (var i = 0; i < selectedActivities.length; i++)
+        {
+            const index = activities.map(el => el.name).indexOf(selectedActivities[i]);
+            const id = activities[index].id;
+            activityIds.push(id);
+        }
         
         axiosInstance
             .put('trips/' + tripId + '/', {
@@ -47,9 +139,12 @@ const EditTrip = () => {
                 'end_date': endDate,
                 budget,
                 notes,
+                accommodations: accommodationIds,
+                transportations: transportationIds,
+                activities: activityIds,
             })
             .then(() => {
-                navigate(-1);
+                navigate('/trips/' + tripId + '/');
             })
             .catch((err) => {
                 alert(err);
@@ -65,6 +160,9 @@ const EditTrip = () => {
         setEndDate(undefined);
         setBudget(undefined);
         setNotes("");
+        setSelectedAccommodations([]);
+        setSelectedTransportations([]);
+        setSelectedActivities([]);
     };
 
     return (
@@ -94,6 +192,21 @@ const EditTrip = () => {
 
                 <p>Notes</p>
                 <textarea name="notes" rows="10" value={notes} onChange={(e) => setNotes(e.target.value)} style={{width: '100%'}} />
+
+                <p>Accommodations</p>
+                <MultipleSelectChip selected={selectedAccommodations} change={handleSelectedAccommodations}
+                                    categoryName="Accommodations" 
+                                    options={accommodations.map((item) => item.name)} />
+
+                <p>Transportations</p>
+                <MultipleSelectChip selected={selectedTransportations} change={handleSelectedTransformations}
+                                    categoryName="Transformations" 
+                                    options={transportations.map((item) => item.name)} />
+
+                <p>Activities</p>
+                <MultipleSelectChip selected={selectedActivities} change={handleSelectedActivities}
+                                    categoryName="Activities" 
+                                    options={activities.map((item) => item.name)} />
 
                 <Container align="center">
                     

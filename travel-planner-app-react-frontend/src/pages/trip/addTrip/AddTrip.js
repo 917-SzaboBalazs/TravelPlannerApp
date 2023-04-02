@@ -15,16 +15,32 @@ const AddTrip = () => {
     const [notes, setNotes] = useState("");
 
     const [accommodations, setAccommodations] = useState([]);
-    const [selectedAccommodations, setSelectedAccommodations] = React.useState([]);
+    const [selectedAccommodations, setSelectedAccommodations] = useState([]);
+
+    const [transportations, setTransportations] = useState([]);
+    const [selectedTransportations, setSelectedTransportations] = useState([]);
+
+    const [activities, setActivities] = useState([]);
+    const [selectedActivities, setSelectedActivities] = useState([]);
 
     const navigate = useNavigate();
 
     const handleSelectedAccommodations = (accommodations) => {
         setSelectedAccommodations(accommodations);
-    }
+    };
+
+    const handleSelectedTransformations = (transformations) => {
+        setSelectedTransportations(transformations);
+    };
+
+    const handleSelectedActivities = (activities) => {
+        setSelectedActivities(activities);
+    };
 
     useEffect(() => {
         LoadAccommodations();
+        LoadTransportations();
+        LoadActivities();
     }, []);
 
     const LoadAccommodations = () => {
@@ -35,7 +51,29 @@ const AddTrip = () => {
             })
             .catch((err) => {
                 alert(err);
+            });
+    };
+
+    const LoadTransportations = () => {
+        axiosInstance
+            .get('transportations/')
+            .then((res) => {
+                setTransportations(res.data);
             })
+            .catch((err) => {
+                alert(err);
+            });
+    };
+
+    const LoadActivities = () => {
+        axiosInstance
+            .get('activities/')
+            .then((res) => {
+                setActivities(res.data);
+            })
+            .catch((err) => {
+                alert(err);
+            });
     };
 
     const handleSubmit = (event) => {
@@ -49,7 +87,24 @@ const AddTrip = () => {
             const id = accommodations[index].id;
             accommodationIds.push(id);
         }
+
+        const transportationIds= [];
+
+        for (var i = 0; i < selectedTransportations.length; i++)
+        {
+            const index = transportations.map(el => el.name).indexOf(selectedTransportations[i]);
+            const id = transportations[index].id;
+            transportationIds.push(id);
+        }
         
+        const activityIds = [];
+
+        for (var i = 0; i < selectedActivities.length; i++)
+        {
+            const index = activities.map(el => el.name).indexOf(selectedActivities[i]);
+            const id = activities[index].id;
+            activityIds.push(id);
+        }
         
         axiosInstance
             .post('trips/', {
@@ -60,6 +115,8 @@ const AddTrip = () => {
                 budget,
                 notes,
                 accommodations: accommodationIds,
+                transportations: transportationIds,
+                activities: activityIds
             })
             .then(() => {
 
@@ -80,6 +137,8 @@ const AddTrip = () => {
         setBudget(undefined);
         setNotes("");
         setSelectedAccommodations([]);
+        setSelectedTransportations([]);
+        setSelectedActivities([]);
     };
 
     return (
@@ -114,6 +173,16 @@ const AddTrip = () => {
                 <MultipleSelectChip selected={selectedAccommodations} change={handleSelectedAccommodations}
                                     categoryName="Accommodations" 
                                     options={accommodations.map((item) => item.name)} />
+
+                <p>Transportations</p>
+                <MultipleSelectChip selected={selectedTransportations} change={handleSelectedTransformations}
+                                    categoryName="Transformations" 
+                                    options={transportations.map((item) => item.name)} />
+
+                <p>Activities</p>
+                <MultipleSelectChip selected={selectedActivities} change={handleSelectedActivities}
+                                    categoryName="Activities" 
+                                    options={activities.map((item) => item.name)} />
 
                 <Container align="center">
                     

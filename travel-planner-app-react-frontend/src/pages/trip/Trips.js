@@ -14,16 +14,16 @@ const Trips = () => {
   const [data, setData] = useState([]);
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 200, 
+    { field: 'name', headerName: 'Name', width: 300, 
       renderCell: (params) => (
       <Link to={`${params.id}/`} className='details-link'>{params.value}</Link>
     )
     },
-    { field: 'destination', headerName: 'Destination', width: 200 },
+    { field: 'destination', headerName: 'Destination', width: 150 },
     { field: 'start_date', headerName: 'Start Date', width: 100 },
     { field: 'end_date', headerName: 'End Date', width: 100 },
     { field: 'budget', headerName: 'Budget', width: 100 },
-    { field: 'notes', headerName: 'Notes', width: 400 },
+    { field: 'notes', headerName: 'Notes', width: 350 },
     { field: 'actions', headerName: '', sortable: false, width: 200, renderCell: (params) => {
       return (
         <>
@@ -72,9 +72,13 @@ const Trips = () => {
     <>
       <Container maxWidth="xl" sx={{ height: '100%'}}>
         
-      <Typography variant="h3" align="center" sx={{ m: 2 }}>
-        Trips
-      </Typography>
+        <Typography variant="h3" align="center" sx={{ m: 2 }} >
+          Trips
+        </Typography>
+
+        <Button variant="contained" size="large" className="trips-add-button">
+          <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
+        </Button>
 
         <DataGrid sx={{ height: '500px' }}
           rows={data}
@@ -82,11 +86,14 @@ const Trips = () => {
           pageSize={5}
           rowsPerPageOptions={[5]}
           checkboxSelection
+          initialState={{
+            sorting: {
+              sortModel: [{ field: 'id', sort: 'desc' }],
+            },
+          }}
         />
 
-        <Button variant="text" sx={{ m: 2 }}>
-          <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
-        </Button>
+        
       </Container>
 
     </>
