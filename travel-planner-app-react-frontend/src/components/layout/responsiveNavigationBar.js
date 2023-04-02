@@ -15,7 +15,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 import { Link } from "react-router-dom";
 
 const pages = [
-  {'name': 'Trips', 'path': '/trips/'}
+  {'name': 'Trips', 'path': '/trips/'},
+  {'name': 'Reports', 'path': '/reports/'},
 ];
 const settings = [];
 
