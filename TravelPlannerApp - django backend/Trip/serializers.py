@@ -9,10 +9,12 @@ from Trip.reports import AverageDurationOfTripsInDays, TripsTotalPriceOfActiviti
 # ================== Model serializers ===========================
 
 class AccommodationSerializer(serializers.ModelSerializer):
+    type_id = serializers.PrimaryKeyRelatedField(queryset=AccommodationType.objects.all(), write_only=True)
 
     class Meta:
         model = Accommodation
         fields = "__all__"
+        depth = 1
 
     def validate(self, data):
         if data["no_stars"] is not None and (data["no_stars"] < 1 or data["no_stars"] > 5):
@@ -23,17 +25,57 @@ class AccommodationSerializer(serializers.ModelSerializer):
 
         return data
 
+    def create(self, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
 
-class AccommodationTypeSerializer(serializers.ModelSerializer):
-    accom_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+        accommodation = Accommodation.objects.create(**validated_data)
+        accommodation.save()
+
+        return accommodation
+
+    def update(self, instance, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+        [setattr(instance, k, v) for k, v in validated_data.items()]
+        instance.save()
+
+        return instance
+
+
+class TransportationSerializer(serializers.ModelSerializer):
+    type_id = serializers.PrimaryKeyRelatedField(queryset=TransportationType.objects.all(), write_only=True)
 
     class Meta:
-        model = AccommodationType
+        model = Transportation
         fields = "__all__"
+        depth = 1
+
+    def validate(self, data):
+
+        if data["price"] is not None and data["price"] < 0.:
+            raise serializers.ValidationError("price must be a non-negative float number")
+
+        if data["comfort_level"] is not None and (data["comfort_level"] < 1 or data["comfort_level"] > 5):
+            raise serializers.ValidationError("comfort level must be between 1 and 5")
+
+        return data
+
+    def create(self, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+
+        transportation = Transportation.objects.create(**validated_data)
+        transportation.save()
+
+        return transportation
+
+    def update(self, instance, validated_data):
+        validated_data['type_id'] = validated_data['type_id'].id
+        [setattr(instance, k, v) for k, v in validated_data.items()]
+        instance.save()
+
+        return instance
 
 
 class ActivitySerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Activity
         fields = "__all__"
@@ -48,46 +90,65 @@ class ActivitySerializer(serializers.ModelSerializer):
         return data
 
 
-class TransportationSerializer(serializers.ModelSerializer):
-
+class TripListSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Transportation
-        fields = "__all__"
+        model = Trip
+        fields = ["id", "name", "destination", "start_date", "end_date", "budget", "notes", "accommodations",
+                  "transportations", "activities", ]
 
     def validate(self, data):
 
-        if data["price"] is not None and data["price"] < 0.:
-            raise serializers.ValidationError("price must be a non-negative float number")
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
 
-        if data["comfort_level"] is not None and (data["comfort_level"] < 1 or data["comfort_level"] > 5):
-            raise serializers.ValidationError("comfort level must be between 1 and 5")
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
 
         return data
 
 
-class TransportationTypeSerializer(serializers.ModelSerializer):
-    transport_ids = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+class TripDetailSerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Trip
+        fields = ["name", "destination", "start_date", "end_date", "budget", "notes", "transportations", "activities",
+                  "accommodations", ]
+
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
+
+        method = self.context['method']
+
+        if method == "GET":
+            self.Meta.depth = 2
+        else:
+            self.Meta.depth = 0
+
+    def validate(self, data):
+
+        if "start_date" in data and "end_date" in data and data["start_date"] is not None and data["end_date"] \
+                is not None and data["start_date"] > data["end_date"]:
+            raise serializers.ValidationError("finish must occur after start")
+
+        if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
+            raise serializers.ValidationError("budget must be a non-negative float number")
+
+        return data
+
+
+class AccommodationTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccommodationType
+        fields = "__all__"
+
+
+class TransportationTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TransportationType
         fields = "__all__"
 
-
-class TripSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Trip
-        fields = "__all__"
-
-    def validate(self, data):
-
-        if data["start_date"] is not None and data["end_date"] is not None and data["start_date"] > data["end_date"]:
-            raise serializers.ValidationError("finish must occur after start")
-
-        if data["budget"] is not None and data["budget"] < 0.:
-            raise serializers.ValidationError("budget must be a non-negative float number")
-
-        return data
 
 # ==============================================================
 
@@ -95,19 +156,16 @@ class TripSerializer(serializers.ModelSerializer):
 
 
 class AverageDurationOfTripsInDaysSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = AverageDurationOfTripsInDays
 
 
 class TripsTotalPriceOfActivitiesSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = TripsTotalPriceOfActivities
 
 
 class TripsBasedOnAverageComfortOfTransportationsSerializer(DataclassSerializer):
-
     class Meta:
         dataclass = TripsBasedOnAverageComfortOfTransportations
 
