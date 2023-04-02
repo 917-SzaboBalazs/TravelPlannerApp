@@ -81,7 +81,7 @@ const AddTrip = () => {
 
         const accommodationIds = [];
 
-        for (var i = 0; i < selectedAccommodations.length; i++)
+        for (let i = 0; i < selectedAccommodations.length; i++)
         {
             const index = accommodations.map(el => el.name).indexOf(selectedAccommodations[i]);
             const id = accommodations[index].id;
@@ -90,7 +90,7 @@ const AddTrip = () => {
 
         const transportationIds= [];
 
-        for (var i = 0; i < selectedTransportations.length; i++)
+        for (let i = 0; i < selectedTransportations.length; i++)
         {
             const index = transportations.map(el => el.name).indexOf(selectedTransportations[i]);
             const id = transportations[index].id;
@@ -99,7 +99,7 @@ const AddTrip = () => {
         
         const activityIds = [];
 
-        for (var i = 0; i < selectedActivities.length; i++)
+        for (let i = 0; i < selectedActivities.length; i++)
         {
             const index = activities.map(el => el.name).indexOf(selectedActivities[i]);
             const id = activities[index].id;
