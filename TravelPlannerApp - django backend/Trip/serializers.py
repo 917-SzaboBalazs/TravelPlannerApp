@@ -1,7 +1,10 @@
 from rest_framework import serializers
 from rest_framework_dataclasses.serializers import DataclassSerializer
 
-from Trip.models import Trip, Accommodation, Activity, AccommodationType, Transportation, TransportationType
+from Trip.models.trips import Trip
+from Trip.models.accommodations import AccommodationType, Accommodation
+from Trip.models.transportations import TransportationType, Transportation
+from Trip.models.activities import Activity
 from Trip.reports import AverageDurationOfTripsInDays, TripsTotalPriceOfActivities, \
     TripsBasedOnAverageComfortOfTransportations
 

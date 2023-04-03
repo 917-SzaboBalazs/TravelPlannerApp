@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Button, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
 
@@ -12,6 +12,39 @@ const Trips = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
+  const [statistics, setStatistics] = useState({
+    "avgBudget": 0,
+    "nameOfLongestTrip": "",
+  });
+
+  const calcAvgBudget = (data) => {
+    var totalBudget = 0.;
+    var idOfLongestTrip = 0;
+
+    for (let i = 0; i < data.length; i++)
+    {
+      totalBudget += data[i].budget;
+      let curr_end_date = new Date(data[i].end_date);
+      let curr_start_date = new Date(data[i].start_date);
+      
+      let max_end_date = new Date(data[idOfLongestTrip].end_date);
+      let max_start_date = new Date(data[idOfLongestTrip].start_date);
+
+      if (curr_end_date - curr_start_date > max_end_date - max_start_date)
+      {
+        idOfLongestTrip = i;
+      }
+    }
+
+    var avgBudget = data.length > 0 ? totalBudget / data.length : 0.;
+    var nameOfLongestTrip = data[idOfLongestTrip].name;
+
+    setStatistics({
+      "avgBudget": avgBudget,
+      "nameOfLongestTrip": nameOfLongestTrip,
+    })
+  }
+
   const columns = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'name', headerName: 'Name', width: 300, 
@@ -52,6 +85,7 @@ const Trips = () => {
       .then((res) => {
 
         setData(res.data);
+        calcAvgBudget(res.data);
 
     })
       .catch((err) => {
@@ -92,6 +126,24 @@ const Trips = () => {
             },
           }}
         />
+
+        <Box variant="div">
+          <Typography variant="h3" align='center' sx={{ m: 2 }}>
+            Statistics
+          </Typography>
+
+          <Typography align="center" sx={{ m: 1 }}>
+            You have {data.length} trips
+          </Typography>
+
+          <Typography align="center" sx={{ m: 1 }}>
+            Average budget: {statistics.avgBudget} euros
+          </Typography>
+
+          <Typography align="center" sx={{ m: 1 }}>
+            Your longest trip is {statistics.nameOfLongestTrip}
+          </Typography>
+        </Box>
 
         
       </Container>
