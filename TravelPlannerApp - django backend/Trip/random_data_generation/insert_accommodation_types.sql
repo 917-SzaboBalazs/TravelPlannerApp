@@ -1,0 +1,22 @@
+INSERT INTO "Trip_accommodationtype" (id, name) 
+VALUES 
+  (1, 'Hotel'),
+  (2, 'Resort'),
+  (3, 'Hostel'),
+  (4, 'Motel'),
+  (5, 'Bed and Breakfast'),
+  (6, 'Vacation Rental'),
+  (7, 'Cabin'),
+  (8, 'Campsite'),
+  (9, 'RV Park'),
+  (10, 'Guesthouse'),
+  (11, 'Farmstay'),
+  (12, 'Ryokan'),
+  (13, 'Pension'),
+  (14, 'Chalet'),
+  (15, 'Treehouse'),
+  (16, 'Boat'),
+  (17, 'Yurt'),
+  (18, 'Tent'),
+  (19, 'Castle'),
+  (20, 'Lighthouse');

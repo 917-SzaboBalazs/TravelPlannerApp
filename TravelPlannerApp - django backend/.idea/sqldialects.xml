@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/Trip/random_data_generation/generate_accommodations.py" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Trip/random_data_generation/insert_accommodation_types.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Trip/random_data_generation/insert_accommodations.sql" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Trip/random_data_generation/insert_transportation_types.sql" dialect="GenericSQL" />
+  </component>
+</project>

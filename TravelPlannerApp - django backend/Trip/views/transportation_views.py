@@ -9,13 +9,15 @@ from Trip.serializers.transportation_serializers import TransportationSerializer
 
 
 class ListCreateTransportationView(ListCreateAPIView):
-    queryset = Transportation.objects.all()
     serializer_class = TransportationSerializer
 
     def get_serializer_context(self):
         return {
             "depth": 1 if self.request.method == "GET" else 0,
         }
+    
+    def get_queryset(self):
+        return Transportation.objects.all().order_by("-id")
 
 
 class RetrieveUpdateDestroyTransportationView(RetrieveUpdateDestroyAPIView):

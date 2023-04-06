@@ -9,8 +9,10 @@ from Trip.serializers.accommodation_serializers import AccommodationSerializer
 
 
 class ListCreateAccommodationView(ListCreateAPIView):
-    queryset = Accommodation.objects.all()
     serializer_class = AccommodationSerializer
+
+    def get_queryset(self):
+        return Accommodation.objects.all().order_by("-id")
 
     def get_serializer_context(self):
         return {
