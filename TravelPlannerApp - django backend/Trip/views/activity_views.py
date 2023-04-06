@@ -3,9 +3,9 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Trip.models.activities import Activity
-from Trip.models.trips import Trip
-from Trip.serializers import ActivitySerializer
+from Trip.models.activity import Activity
+from Trip.models.trip import Trip
+from Trip.serializers.activity_serializers import ActivitySerializer
 
 
 class ListCreateActivityView(ListCreateAPIView):

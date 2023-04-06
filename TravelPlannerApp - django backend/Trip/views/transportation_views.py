@@ -3,19 +3,29 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Trip.models.transportations import Transportation, TransportationType
-from Trip.models.trips import Trip
-from Trip.serializers import TransportationSerializer
+from Trip.models.transportation import Transportation, TransportationType
+from Trip.models.trip import Trip
+from Trip.serializers.transportation_serializers import TransportationSerializer
 
 
 class ListCreateTransportationView(ListCreateAPIView):
     queryset = Transportation.objects.all()
     serializer_class = TransportationSerializer
 
+    def get_serializer_context(self):
+        return {
+            "depth": 1 if self.request.method == "GET" else 0,
+        }
+
 
 class RetrieveUpdateDestroyTransportationView(RetrieveUpdateDestroyAPIView):
     queryset = Transportation.objects.all()
     serializer_class = TransportationSerializer
+
+    def get_serializer_context(self):
+        return {
+            "depth": 1 if self.request.method == "GET" else 0,
+        }
 
 
 class ListAddTransportationView(APIView):

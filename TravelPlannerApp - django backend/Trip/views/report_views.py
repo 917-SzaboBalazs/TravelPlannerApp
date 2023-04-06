@@ -4,9 +4,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Trip.models.trips import Trip
-from Trip.serializers import AverageDurationOfTripsInDaysSerializer, TripsTotalPriceOfActivitiesSerializer, \
-    TripsBasedOnAverageComfortOfTransportationsSerializer
+from Trip.models.trip import Trip
+from Trip.serializers.report_serializers import AverageDurationOfTripsInDaysSerializer,\
+    TripsTotalPriceOfActivitiesSerializer, TripsBasedOnAverageComfortOfTransportationsSerializer
 
 
 class AverageDurationOfTripsInDaysView(APIView):

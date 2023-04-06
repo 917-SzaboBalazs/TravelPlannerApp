@@ -3,19 +3,29 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from Trip.models.accommodations import Accommodation, AccommodationType
-from Trip.models.trips import Trip
-from Trip.serializers import AccommodationSerializer
+from Trip.models.accommodation import Accommodation, AccommodationType
+from Trip.models.trip import Trip
+from Trip.serializers.accommodation_serializers import AccommodationSerializer
 
 
 class ListCreateAccommodationView(ListCreateAPIView):
     queryset = Accommodation.objects.all()
     serializer_class = AccommodationSerializer
 
+    def get_serializer_context(self):
+        return {
+            "depth": 1 if self.request.method == "GET" else 0,
+        }
+
 
 class RetrieveUpdateDestroyAccommodationView(RetrieveUpdateDestroyAPIView):
     queryset = Accommodation.objects.all()
     serializer_class = AccommodationSerializer
+
+    def get_serializer_context(self):
+        return {
+            "depth": 1 if self.request.method == "GET" else 0,
+        }
 
 
 class ListAddAccommodationView(APIView):

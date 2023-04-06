@@ -1,8 +1,8 @@
 from django.db import models
 
-from Trip.models.accommodations import Accommodation
-from Trip.models.activities import Activity
-from Trip.models.transportations import Transportation
+from Trip.models.accommodation import Accommodation
+from Trip.models.activity import Activity
+from Trip.models.transportation import Transportation
 
 
 class Trip(models.Model):

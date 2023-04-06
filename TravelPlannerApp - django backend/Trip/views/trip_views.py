@@ -1,10 +1,12 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
-from Trip.models.trips import Trip
-from Trip.serializers import TripListSerializer, TripDetailSerializer
+from Trip.models.trip import Trip
+from Trip.serializers.trip_serializers import TripSerializer
 
 
 class ListCreateTripView(ListCreateAPIView):
+
+    serializer_class = TripSerializer
 
     def get_queryset(self):
         """
@@ -20,15 +22,25 @@ class ListCreateTripView(ListCreateAPIView):
 
         return queryset
 
-    def get_serializer_class(self):
-        return TripListSerializer
+    def get_serializer_context(self):
+        if self.request.method == "GET":
+            return {
+                "depth": 0,
+                "exclude": ("accommodations", "transportations", "activities", ),
+            }
+
+        return {
+            "exclude": (),
+            "depth": 0,
+        }
 
 
 class RetrieveUpdateDestroyTripView(RetrieveUpdateDestroyAPIView):
     queryset = Trip.objects.all()
-    serializer_class = TripDetailSerializer
+    serializer_class = TripSerializer
 
     def get_serializer_context(self):
         return {
-            'method': self.request.method
+            "depth": 2 if self.request.method == "GET" else 0,
+            "exclude": (),
         }

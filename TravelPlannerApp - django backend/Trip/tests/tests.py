@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 
-from Trip.models import Trip, Activity
+from Trip.models.trip import Trip
+from Trip.models.activity import Activity
 
 
 class TestAverageDurationOfTrips(APITestCase):
