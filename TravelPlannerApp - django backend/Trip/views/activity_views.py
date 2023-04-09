@@ -9,8 +9,10 @@ from Trip.serializers.activity_serializers import ActivitySerializer
 
 
 class ListCreateActivityView(ListCreateAPIView):
-    queryset = Activity.objects.all()
     serializer_class = ActivitySerializer
+
+    def get_queryset(self):
+        return Activity.objects.all().order_by("-id")
 
 
 class RetrieveUpdateDestroyActivityView(RetrieveUpdateDestroyAPIView):

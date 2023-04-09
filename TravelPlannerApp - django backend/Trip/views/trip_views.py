@@ -1,5 +1,4 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
-
 from Trip.models.trip import Trip
 from Trip.serializers.trip_serializers import TripSerializer
 
@@ -14,7 +13,7 @@ class ListCreateTripView(ListCreateAPIView):
         parameter in the request query parameters. It filters the queryset to include only Trip objects whose
         budget field is less than or equal to the provided max_budget value.
         """
-        queryset = Trip.objects.all()
+        queryset = Trip.objects.all().order_by("-id")
         max_budget = self.request.query_params.get('max_budget')
 
         if max_budget is not None:
