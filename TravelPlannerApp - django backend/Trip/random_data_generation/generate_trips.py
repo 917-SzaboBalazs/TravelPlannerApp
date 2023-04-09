@@ -4,34 +4,38 @@ from faker import Faker
 
 fake = Faker()
 
-with open("insert_trips.sql", "w") as file:
-    for i in range(1000):
-        sql_command = ""
+for file_index in range(1, 11):
+    file_name = "insert_trips_" + str(file_index) + ".sql"
+    start_index = (file_index - 1) * 100_000
 
-        # Add command row
-        sql_command += "INSERT INTO public.\"Trip_trip\"(id, name, destination, budget, " + \
-                       "start_date, end_date, notes)\n"
-        sql_command += "VALUES\n"
+    with open(file_name, "w") as file:
+        for i in range(100):
+            sql_command = ""
 
-        # Add values
-        for j in range(1000):
-            id = i * 1000 + j + 1
-            name = fake.sentence(nb_words=4, variable_nb_words=True)[:-1].replace('\'', '')
-            destination = fake.country().replace('\'', '')
-            budget = fake.random.randint(5, 30) * 1000
-            start_date = fake.date_between()
-            end_date = fake.date_between(start_date=start_date + datetime.timedelta(days=3),
-                                         end_date=start_date + datetime.timedelta(days=30))
+            # Add command row
+            sql_command += "INSERT INTO public.\"Trip_trip\"(id, name, destination, budget, " + \
+                           "start_date, end_date, notes)\n"
+            sql_command += "VALUES\n"
 
-            start_date_str = start_date.strftime('%Y-%m-%d')
-            end_date_str = end_date.strftime('%Y-%m-%d')
+            # Add values
+            for j in range(1000):
+                id = i * 1000 + j + 1 + start_index
+                name = fake.sentence(nb_words=4, variable_nb_words=True)[:-1].replace('\'', '')
+                destination = fake.country().replace('\'', '')
+                budget = fake.random.randint(5, 30) * 1000
+                start_date = fake.date_between()
+                end_date = fake.date_between(start_date=start_date + datetime.timedelta(days=3),
+                                             end_date=start_date + datetime.timedelta(days=30))
 
-            notes = fake.paragraph(nb_sentences=4, variable_nb_sentences=True).replace('\'', '')
+                start_date_str = start_date.strftime('%Y-%m-%d')
+                end_date_str = end_date.strftime('%Y-%m-%d')
 
-            sql_command += "({}, \'{}\', \'{}\', {}, \'{}\', \'{}\', \'{}\'),\n"\
-                .format(id, name, destination, budget, start_date_str, end_date_str, notes)
+                notes = fake.paragraph(nb_sentences=4, variable_nb_sentences=True).replace('\'', '')
 
-        sql_command = sql_command[:-2]
-        sql_command += "\n;\n"
+                sql_command += "({}, \'{}\', \'{}\', {}, \'{}\', \'{}\', \'{}\'),\n"\
+                    .format(id, name, destination, budget, start_date_str, end_date_str, notes)
 
-        print(sql_command, file=file)
+            sql_command = sql_command[:-2]
+            sql_command += "\n;\n"
+
+            print(sql_command, file=file)
