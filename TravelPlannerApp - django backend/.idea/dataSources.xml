@@ -10,5 +10,17 @@
       <jdbc-url>jdbc:sqlite:C:\Users\User\OneDrive\Desktop\UBB\Semester 4\SDI\TravelPlannerApp\db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="db" uuid="7bc29d05-fc1d-40fe-a7a5-b328e23284ed">
+      <driver-ref>69f61eb6-4ba6-4c20-b3db-f4565533d708</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db.sqlite3</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+      <libraries>
+        <library>
+          <url>file://$APPLICATION_CONFIG_DIR$/jdbc-drivers/Xerial SQLiteJDBC/3.38.0/sqlite-jdbc-3.38.0.jar</url>
+        </library>
+      </libraries>
+    </data-source>
   </component>
 </project>

@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from Trip.models.trips import Trip
-from Trip.models.accommodations import AccommodationType, Accommodation
-from Trip.models.transportations import TransportationType, Transportation
-from Trip.models.activities import Activity
+from Trip.models.trip import Trip
+from Trip.models.accommodation import AccommodationType, Accommodation
+from Trip.models.transportation import TransportationType, Transportation
+from Trip.models.activity import Activity
 
 # Register your models here.
 

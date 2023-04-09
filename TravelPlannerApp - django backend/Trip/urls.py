@@ -1,14 +1,14 @@
 from django.urls import path
 
-from Trip.views.reports import AverageDurationOfTripsInDaysView, TripsTotalPriceOfActivitiesView, \
+from Trip.views.report_views import AverageDurationOfTripsInDaysView, TripsTotalPriceOfActivitiesView, \
     SortTripsBasedOnAverageComfortOfTransportations
-from Trip.views.activities import ListCreateActivityView, RetrieveUpdateDestroyActivityView, ListAddActivityView, \
+from Trip.views.activity_views import ListCreateActivityView, RetrieveUpdateDestroyActivityView, ListAddActivityView, \
     RemoveActivityFromTripView
-from Trip.views.transportations import ListCreateTransportationView, RetrieveUpdateDestroyTransportationView, \
+from Trip.views.transportation_views import ListCreateTransportationView, RetrieveUpdateDestroyTransportationView, \
     ListAddTransportationView, RemoveTransportationFromTripView
-from Trip.views.accommodations import ListCreateAccommodationView, RetrieveUpdateDestroyAccommodationView, \
+from Trip.views.accommodation_views import ListCreateAccommodationView, RetrieveUpdateDestroyAccommodationView, \
     ListAddAccommodationView, RemoveAccommodationFromTripView
-from Trip.views.trips import ListCreateTripView, RetrieveUpdateDestroyTripView
+from Trip.views.trip_views import ListCreateTripView, RetrieveUpdateDestroyTripView
 
 urlpatterns = [
     path('trips/', ListCreateTripView.as_view(), name="trip_list"),
