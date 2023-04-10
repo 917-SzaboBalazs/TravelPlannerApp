@@ -18,7 +18,7 @@ for file_index in range(1, 11):
             for j in range(1000):
                 id = i * 1000 + j + 1 + start_index
                 name = fake.job().replace('\'', '')
-                description = fake.paragraph(nb_sentences=2, variable_nb_sentences=True).replace('\'', '')
+                description = fake.paragraph(nb_sentences=3, variable_nb_sentences=False).replace('\'', '')
                 price = fake.random.randint(10, 100)
                 no_persons = fake.random.randint(1, 10)
                 has_instructor = fake.boolean(chance_of_getting_true=30)
