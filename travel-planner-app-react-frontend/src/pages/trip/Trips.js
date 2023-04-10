@@ -83,6 +83,7 @@ const Trips = () => {
     axiosInstance
       .get('trips/')
       .then((res) => {
+        console.log(res.data);
 
         setData(res.data);
         calcAvgBudget(res.data);
