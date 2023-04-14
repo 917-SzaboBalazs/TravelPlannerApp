@@ -64,7 +64,7 @@ const EditTrip = () => {
         axiosInstance
             .get('accommodations/')
             .then((res) => {
-                setAccommodations(res.data);
+                setAccommodations(res.data.results);
             })
             .catch((err) => {
                 alert(err);
@@ -75,7 +75,7 @@ const EditTrip = () => {
         axiosInstance
             .get('transportations/')
             .then((res) => {
-                setTransportations(res.data);
+                setTransportations(res.data.results);
             })
             .catch((err) => {
                 alert(err);
@@ -86,7 +86,7 @@ const EditTrip = () => {
         axiosInstance
             .get('activities/')
             .then((res) => {
-                setActivities(res.data);
+                setActivities(res.data.results);
             })
             .catch((err) => {
                 alert(err);

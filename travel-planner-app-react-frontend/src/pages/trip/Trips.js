@@ -2,15 +2,19 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Pagination, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
+import { VapingRooms } from '@mui/icons-material';
 
 
 const Trips = () => {
 
   const navigate = useNavigate();
 
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(100);
   const [data, setData] = useState([]);
   const [statistics, setStatistics] = useState({
     "avgBudget": 0,
@@ -46,8 +50,8 @@ const Trips = () => {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'name', headerName: 'Name', width: 300, 
+    { field: 'id', headerName: 'ID', width: 120 },
+    { field: 'name', headerName: 'Name', width: 350, 
       renderCell: (params) => (
       <Link to={`${params.id}/`} className='details-link'>{params.value}</Link>
     )
@@ -78,13 +82,31 @@ const Trips = () => {
       }}
   ];
 
+  const handlePageChange = ((event) => {
+    var pageNumber = 0;
+
+    if (event.target.dataset.testid == "NavigateNextIcon")
+    {
+      pageNumber = page + 1;
+    }
+    else if (event.target.dataset.testid == "NavigateBeforeIcon")
+    {
+      pageNumber = page - 1;
+    }
+    else
+    {
+      pageNumber = parseInt(event.target.outerText)
+    }
+
+    setPage(pageNumber);
+  })
+
   const LoadTrips = (() => {
     
     axiosInstance
-      .get('trips/')
+      .get('trips/?page=' + page)
       .then((res) => {
-        console.log(res.data.results);
-
+        setCount(res.data.count);
         setData(res.data.results);
         calcAvgBudget(res.data.results);
 
@@ -101,7 +123,7 @@ const Trips = () => {
 
     LoadTrips();
 
-  }, []);
+  }, [page]);
 
   return (
     <>
@@ -115,22 +137,32 @@ const Trips = () => {
           <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
         </Button>
 
-        <DataGrid sx={{ height: '500px' }}
+        <DataGrid sx={{ height: '600px' }}
           rows={data}
           columns={columns}
-          pageSize={5}
-          rowsPerPageOptions={[5]}
-          checkboxSelection
           initialState={{
             sorting: {
               sortModel: [{ field: 'id', sort: 'desc' }],
             },
           }}
+          hideFooter
         />
 
+        <Pagination
+          count={Math.ceil(count / pageSize)}
+          page={page}
+          onChange={handlePageChange}
+          color='primary'
+          variant='outlined'
+          className='pagination'
+          siblingCount={2}
+          boundaryCount={1}
+        />
+
+        {/*
         <Box variant="div">
-          <Typography variant="h3" align='center' sx={{ m: 2 }}>
-            Statistics
+          <Typography variant="h4" align='center' sx={{ mt: 2, mb: 1 }}>
+            Page Statistics
           </Typography>
 
           <Typography align="center" sx={{ m: 1 }}>
@@ -145,6 +177,7 @@ const Trips = () => {
             Your longest trip is {statistics.nameOfLongestTrip}
           </Typography>
         </Box>
+        */}
 
         
       </Container>

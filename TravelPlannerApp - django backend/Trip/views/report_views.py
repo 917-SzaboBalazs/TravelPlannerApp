@@ -1,5 +1,7 @@
-from django.db import models
-from django.db.models import Avg, F, Count
+import datetime
+
+from django.db.models import Avg, F, Count, FloatField
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -18,14 +20,21 @@ class AverageDurationOfTripsInDaysView(APIView):
         between the start date and end date of each trip.
         """
 
-        data = Trip.objects.all().filter(start_date__isnull=False, end_date__isnull=False)\
-            .aggregate(
-            average_duration=Avg(
-                F('end_date') - F('start_date'),
-                output_field=models.FloatField()
-            ) / 1000 / 1000 / 60 / 60 / 24,
-            number_of_trips=Count('id')
-        )
+        queryset = Trip.objects.all().filter(start_date__isnull=False, end_date__isnull=False)
+        total_duration = 0.
+
+        for trip in queryset:
+            total_duration += (trip.end_date - trip.start_date).total_seconds() / 60 / 24
+
+        if len(queryset) > 0:
+            average_duration = total_duration / len(queryset)
+        else:
+            average_duration = 0.
+
+        data = {
+            "number_of_trips": len(queryset),
+            "average_duration": average_duration,
+        }
 
         if data["number_of_trips"] == 0:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={"message": "Number of trips with start_data and "

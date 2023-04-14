@@ -34,3 +34,9 @@
     position: absolute;
     top: -40px;
 }
+
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
