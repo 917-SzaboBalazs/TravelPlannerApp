@@ -1,10 +1,12 @@
-import { TextField, Button, Container, Input, Typography } from '@mui/material';
+import { TextField, Button, Container, Input, Typography, CircularProgress } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
 
 const EditTrip = () => {
+
+    const [loading, setLoading] = useState(true);
 
     const [name, setName] = useState("");
     const [destination, setDestination] = useState("");
@@ -41,6 +43,8 @@ const EditTrip = () => {
                 setSelectedAccommodations(res.data.accommodations);
                 setSelectedTransportations(res.data.transportations);
                 setSelectedActivities(res.data.activities);
+
+                setLoading(false);
             })
             .catch((err) => {
                 alert(err);
@@ -52,7 +56,7 @@ const EditTrip = () => {
         if (accommodationFilter.length > 0)
         {
             axiosInstance
-                .get('accommodations/?name_starts_with=' + accommodationFilter)
+                .get('accommodations/?name_starts_with=' + accommodationFilter + "&&length=5")
                 .then((res) => {
                     setAccommodations(res.data.results);
                 })
@@ -71,7 +75,7 @@ const EditTrip = () => {
         if (transportationFilter.length > 0)
         {
             axiosInstance
-                .get('transportations/?name_starts_with=' + transportationFilter)
+                .get('transportations/?name_starts_with=' + transportationFilter + "&&length=5")
                 .then((res) => {
                     setTransportations(res.data.results);
                 })
@@ -89,7 +93,7 @@ const EditTrip = () => {
         if (activityFilter.length > 0)
         {
             axiosInstance
-                .get('activities/?name_starts_with=' + activityFilter)
+                .get('activities/?name_starts_with=' + activityFilter + "&&length=5")
                 .then((res) => {
                     setActivities(res.data.results);
                 })
@@ -107,8 +111,68 @@ const EditTrip = () => {
         LoadTrip();
     }, []);
 
+    const validateFormData = () => {
+        const errorMessages = [];
+
+        if (name.length > 60)
+        {
+            errorMessages.push({"field": "name", "detail": "Maxiumum allowed length is 60 characters."});
+        }
+
+        if (destination.length > 60)
+        {
+            errorMessages.push({"field": "destination", "detail": "Maxiumum allowed length is 60 characters."});
+        }
+
+        if (startDate != undefined && endDate != undefined)
+        {
+            const startDateObject = Date.parse(startDate);
+            const endDateObject = Date.parse(endDate);
+    
+            if (startDateObject > endDateObject)
+            {
+                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal to start date."});
+            }
+        }
+
+        if (budget < 0.)
+        {
+            errorMessages.push({"field": "budget", "detail": "Budget must be a non-negative number."});
+        }
+
+        if (notes.length > 500)
+        {
+            errorMessages.push({"field": "notes", "detail": "Maxiumum allowed length is 500 characters."});
+        }
+
+        if (selectedAccommodations.length > 10)
+        {
+            errorMessages.push({"field": "accommodations", "detail": "Maxiumum number of accommodations is 10."});
+        }
+
+        if (selectedTransportations.length > 10)
+        {
+            errorMessages.push({"field": "transportations", "detail": "Maxiumum number of transportations is 10."});
+        }
+
+        if (selectedActivities.length > 10)
+        {
+            errorMessages.push({"field": "activities", "detail": "Maxiumum number of activities is 10."});
+        }
+
+        return errorMessages;
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        const errorMessages = validateFormData();
+
+        if (errorMessages.length > 0)
+        {
+            console.log(errorMessages);
+            return;
+        }
         
         axiosInstance
             .put('trips/' + tripId + '/', {
@@ -143,6 +207,11 @@ const EditTrip = () => {
         setSelectedTransportations([]);
         setSelectedActivities([]);
     };
+    
+    if (loading)
+    {
+        return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+    }
 
     return (
         <>

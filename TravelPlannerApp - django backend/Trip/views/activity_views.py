@@ -14,11 +14,17 @@ class ListCreateActivityView(ListCreateAPIView):
     def get_queryset(self):
         queryset = Activity.objects.all()
         name_starts_with = self.request.query_params.get('name_starts_with')
+        length = self.request.query_params.get('length')
 
         if name_starts_with is not None:
             queryset = queryset.filter(name__istartswith=name_starts_with)
 
-        return queryset.order_by("-id")[:5]
+        queryset = queryset.order_by("-id")
+
+        if length is not None:
+            queryset = queryset[:int(length)]
+
+        return queryset
 
 
 class RetrieveUpdateDestroyActivityView(RetrieveUpdateDestroyAPIView):

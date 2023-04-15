@@ -7,6 +7,7 @@ import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
 
 const AddTrip = () => {
 
+    
     const [name, setName] = useState("");
     const [destination, setDestination] = useState("");
     const [startDate, setStartDate] = useState(undefined);
@@ -30,7 +31,7 @@ const AddTrip = () => {
         if (accommodationFilter.length > 0)
         {
             axiosInstance
-                .get('accommodations/?name_starts_with=' + accommodationFilter)
+                .get('accommodations/?name_starts_with=' + accommodationFilter + "&&length=5")
                 .then((res) => {
                     setAccommodations(res.data.results);
                 })
@@ -49,7 +50,7 @@ const AddTrip = () => {
         if (transportationFilter.length > 0)
         {
             axiosInstance
-                .get('transportations/?name_starts_with=' + transportationFilter)
+                .get('transportations/?name_starts_with=' + transportationFilter + "&&length=5")
                 .then((res) => {
                     setTransportations(res.data.results);
                 })
@@ -67,7 +68,7 @@ const AddTrip = () => {
         if (activityFilter.length > 0)
         {
             axiosInstance
-                .get('activities/?name_starts_with=' + activityFilter)
+                .get('activities/?name_starts_with=' + activityFilter + "&&length=5")
                 .then((res) => {
                     setActivities(res.data.results);
                 })
@@ -81,8 +82,68 @@ const AddTrip = () => {
         }
     };
 
+    const validateFormData = () => {
+        const errorMessages = [];
+
+        if (name.length > 60)
+        {
+            errorMessages.push({"field": "name", "detail": "Maxiumum allowed length is 60 characters."});
+        }
+
+        if (destination.length > 60)
+        {
+            errorMessages.push({"field": "destination", "detail": "Maxiumum allowed length is 60 characters."});
+        }
+
+        if (startDate != undefined && endDate != undefined)
+        {
+            const startDateObject = Date.parse(startDate);
+            const endDateObject = Date.parse(endDate);
+    
+            if (startDateObject > endDateObject)
+            {
+                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal to start date."});
+            }
+        }
+
+        if (budget < 0.)
+        {
+            errorMessages.push({"field": "budget", "detail": "Budget must be a non-negative number."});
+        }
+
+        if (notes.length > 500)
+        {
+            errorMessages.push({"field": "notes", "detail": "Maxiumum allowed length is 500 characters."});
+        }
+
+        if (selectedAccommodations.length > 10)
+        {
+            errorMessages.push({"field": "accommodations", "detail": "Maxiumum number of accommodations is 10."});
+        }
+
+        if (selectedTransportations.length > 10)
+        {
+            errorMessages.push({"field": "transportations", "detail": "Maxiumum number of transportations is 10."});
+        }
+
+        if (selectedActivities.length > 10)
+        {
+            errorMessages.push({"field": "activities", "detail": "Maxiumum number of activities is 10."});
+        }
+
+        return errorMessages;
+    }
+
     const handleSubmit = (event) => {
         event.preventDefault();
+
+        const errorMessages = validateFormData();
+
+        if (errorMessages.length > 0)
+        {
+            console.log(errorMessages);
+            return;
+        }
         
         axiosInstance
             .post('trips/', {
@@ -92,9 +153,9 @@ const AddTrip = () => {
                 end_date: endDate,
                 budget,
                 notes,
-                accommodations: selectedAccommodations,
-                transportations: selectedTransportations,
-                activities: selectedActivities,
+                accommodations: selectedAccommodations.map(item => item.id),
+                transportations: selectedTransportations.map(item => item.id),
+                activities: selectedActivities.map(item => item.id),
             })
             .then(() => {
                 navigate("/trips/");
@@ -159,7 +220,7 @@ const AddTrip = () => {
                     }
                     getOptionLabel={(option) => option.name}
                     onInputChange={(_, value) => LoadAccommodations(value)}
-                    onChange={(_, values) => setSelectedAccommodations(values.map(value => value.id))}
+                    onChange={(_, values) => setSelectedAccommodations(values)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
@@ -175,6 +236,7 @@ const AddTrip = () => {
                         )
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={selectedAccommodations}
                 />
 
                 <p>Transportations</p>
@@ -190,7 +252,7 @@ const AddTrip = () => {
                     }
                     getOptionLabel={(option) => option.name}
                     onInputChange={(_, value) => LoadTransportations(value)}
-                    onChange={(_, values) => setSelectedTransportations(values.map(value => value.id))}
+                    onChange={(_, values) => setSelectedTransportations(values)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
@@ -206,6 +268,7 @@ const AddTrip = () => {
                         )
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={selectedTransportations}
                 />
 
                 <p>Activities</p>
@@ -221,7 +284,7 @@ const AddTrip = () => {
                     }
                     getOptionLabel={(option) => option.name}
                     onInputChange={(_, value) => LoadActivities(value)}
-                    onChange={(_, values) => setSelectedActivities(values.map(value => value.id))}
+                    onChange={(_, values) => setSelectedActivities(values)}
                     renderInput={(params) => (
                     <TextField
                         {...params}
@@ -237,6 +300,7 @@ const AddTrip = () => {
                         )
                     }}
                     isOptionEqualToValue={(option, value) => option.id === value.id}
+                    value={selectedActivities}
                 />
 
                 <Container align="center">

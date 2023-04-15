@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Button, Pagination, Typography } from '@mui/material';
+import { Button, CircularProgress, Pagination, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
 
@@ -10,6 +10,8 @@ import './trips.css'
 const Trips = () => {
 
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [pageLoading, setPageLoading] = useState(false);
 
   const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
@@ -49,7 +51,7 @@ const Trips = () => {
   }
 
   const columns = [
-    { field: 'id', headerName: 'ID', width: 120 },
+    { field: 'id', headerName: 'ID', width: 100 },
     { field: 'name', headerName: 'Name', width: 350, 
       renderCell: (params) => (
       <Link to={`${params.id}/`} className='details-link'>{params.value}</Link>
@@ -83,6 +85,7 @@ const Trips = () => {
 
   const handlePageChange = ((event) => {
     var pageNumber = 0;
+    setPageLoading(true);
 
     if (event.target.dataset.testid === "NavigateNextIcon")
     {
@@ -108,7 +111,9 @@ const Trips = () => {
         setCount(res.data.count);
         setData(res.data.results);
         calcAvgBudget(res.data.results);
-
+        
+        setLoading(false);
+        setPageLoading(false);
     })
       .catch((err) => {
 
@@ -124,6 +129,11 @@ const Trips = () => {
 
   }, [page]);
 
+  if (loading)
+  {
+      return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+  }
+
   return (
     <>
       <Container maxWidth="xl" sx={{ height: '100%'}}>
@@ -136,16 +146,34 @@ const Trips = () => {
           <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
         </Button>
 
-        <DataGrid sx={{ height: '600px' }}
-          rows={data}
-          columns={columns}
-          initialState={{
-            sorting: {
-              sortModel: [{ field: 'id', sort: 'desc' }],
-            },
-          }}
-          hideFooter
-        />
+        {!pageLoading ?
+          <DataGrid sx={{ height: '600px' }}
+            rows={data}
+            columns={columns}
+            initialState={{
+              sorting: {
+                sortModel: [{ field: 'id', sort: 'desc' }],
+              },
+            }}
+            hideFooter
+            components={{
+              NoRowsOverlay: () => (
+                <></>
+              ),
+            }}
+          />
+          :
+          <DataGrid sx={{ height: '600px' }}
+              rows={[]}
+              columns={columns}
+              hideFooter
+              components={{
+                NoRowsOverlay: () => (
+                  <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+                ),
+              }}
+            />
+        }
 
         <Pagination
           count={Math.ceil(count / pageSize)}

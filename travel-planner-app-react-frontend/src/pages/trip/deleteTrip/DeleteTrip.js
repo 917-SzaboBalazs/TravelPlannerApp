@@ -1,10 +1,12 @@
-import { Button, Container, Typography } from '@mui/material';
+import { Button, CircularProgress, Container, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
 
 const DeleteTripConfirmation = () => {
+
+    const [loading, setLoading] = useState(true);
 
     const [name, setName] = useState("");
     const tripId = useParams().tripId;
@@ -15,6 +17,7 @@ const DeleteTripConfirmation = () => {
             .get('/trips/' + tripId + '/')
             .then((res) => {
                 setName(res.data.name);
+                setLoading(false);
             })
             .catch((err) => {
                 navigate('/404')
@@ -41,6 +44,11 @@ const DeleteTripConfirmation = () => {
     
           
       };
+
+    if (loading)
+    {
+        return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+    }
 
     return (
       <>

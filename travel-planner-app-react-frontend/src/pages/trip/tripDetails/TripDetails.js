@@ -1,4 +1,4 @@
-import { Typography, Button } from '@mui/material';
+import { Typography, Button, CircularProgress } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,6 +8,8 @@ import { useNavigate } from "react-router-dom";
 const TripDetails = () => {
 
     const navigate = useNavigate();
+
+    const [loading, setLoading] = useState(true);
 
     const tripId = useParams().tripId;
     const [details, setDetails] = useState({
@@ -27,6 +29,7 @@ const TripDetails = () => {
             .get('/trips/' + tripId + '/')
             .then((res) => {
                 setDetails(res.data);
+                setLoading(false);
             })
             .catch((err) => {
                 navigate('/404')
@@ -38,6 +41,11 @@ const TripDetails = () => {
     useEffect(() => {
         LoadTrip();
     }, []);
+
+    if (loading)
+    {
+        return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+    }
 
     return (
         <>

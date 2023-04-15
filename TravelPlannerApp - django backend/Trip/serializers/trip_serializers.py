@@ -18,4 +18,13 @@ class TripSerializer(CustomModelSerializer):
         if "budget" in data and data["budget"] is not None and data["budget"] < 0.:
             raise serializers.ValidationError("budget must be a non-negative float number")
 
+        if len(data["accommodations"]) > 10:
+            raise serializers.ValidationError("maximum number of accommodations is 10")
+
+        if len(data["transportations"]) > 10:
+            raise serializers.ValidationError("maximum number of transportations is 10")
+
+        if len(data["activities"]) > 10:
+            raise serializers.ValidationError("maximum number of activities is 10")
+
         return data
