@@ -12,7 +12,13 @@ class ListCreateAccommodationView(ListCreateAPIView):
     serializer_class = AccommodationSerializer
 
     def get_queryset(self):
-        return Accommodation.objects.all().order_by("-id")
+        queryset = Accommodation.objects.all()
+        name_starts_with = self.request.query_params.get('name_starts_with')
+
+        if name_starts_with is not None:
+            queryset = queryset.filter(name__istartswith=name_starts_with)
+
+        return queryset.order_by("-id")[:5]
 
     def get_serializer_context(self):
         return {

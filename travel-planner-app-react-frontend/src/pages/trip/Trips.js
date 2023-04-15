@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Box, Button, Pagination, Typography } from '@mui/material';
+import { Button, Pagination, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
-import { VapingRooms } from '@mui/icons-material';
 
 
 const Trips = () => {
@@ -85,11 +84,11 @@ const Trips = () => {
   const handlePageChange = ((event) => {
     var pageNumber = 0;
 
-    if (event.target.dataset.testid == "NavigateNextIcon")
+    if (event.target.dataset.testid === "NavigateNextIcon")
     {
       pageNumber = page + 1;
     }
-    else if (event.target.dataset.testid == "NavigateBeforeIcon")
+    else if (event.target.dataset.testid === "NavigateBeforeIcon")
     {
       pageNumber = page - 1;
     }
