@@ -114,12 +114,12 @@ const EditTrip = () => {
     const validateFormData = () => {
         const errorMessages = [];
 
-        if (name.length > 60)
+        if (name != null && name.length > 60)
         {
             errorMessages.push({"field": "name", "detail": "Maxiumum allowed length is 60 characters."});
         }
 
-        if (destination.length > 60)
+        if (destination != null && destination.length > 60)
         {
             errorMessages.push({"field": "destination", "detail": "Maxiumum allowed length is 60 characters."});
         }
@@ -135,12 +135,12 @@ const EditTrip = () => {
             }
         }
 
-        if (budget < 0.)
+        if (budget != null && budget < 0.)
         {
             errorMessages.push({"field": "budget", "detail": "Budget must be a non-negative number."});
         }
 
-        if (notes.length > 500)
+        if (notes != null && notes.length > 500)
         {
             errorMessages.push({"field": "notes", "detail": "Maxiumum allowed length is 500 characters."});
         }

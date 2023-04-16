@@ -32,6 +32,7 @@ class RetrieveUpdateDestroyActivityView(RetrieveUpdateDestroyAPIView):
     serializer_class = ActivitySerializer
 
 
+"""
 class ListAddActivityView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -85,3 +86,4 @@ class RemoveActivityFromTripView(APIView):
 
         except (Trip.DoesNotExist, Activity.DoesNotExist) as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
+"""

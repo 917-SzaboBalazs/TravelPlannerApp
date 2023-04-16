@@ -60,8 +60,10 @@ const Trips = () => {
     { field: 'destination', headerName: 'Destination', width: 150 },
     { field: 'start_date', headerName: 'Start Date', width: 100 },
     { field: 'end_date', headerName: 'End Date', width: 100 },
-    { field: 'budget', headerName: 'Budget', width: 100 },
-    { field: 'notes', headerName: 'Notes', width: 350 },
+    { field: 'budget', headerName: 'Budget', width: 80 },
+    { field: 'number_of_accommodations', headerName: 'Accommodations', width: 130 },
+    { field: 'number_of_transportations', headerName: 'Transportations', width: 130 },
+    { field: 'number_of_activities', headerName: 'Activities', width: 130 },
     { field: 'actions', headerName: '', sortable: false, width: 200, renderCell: (params) => {
       return (
         <>

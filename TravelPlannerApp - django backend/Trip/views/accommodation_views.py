@@ -42,7 +42,7 @@ class RetrieveUpdateDestroyAccommodationView(RetrieveUpdateDestroyAPIView):
         }
 
 
-class ListAddAccommodationView(APIView):
+"""class ListAddAccommodationView(APIView):
 
     def get(self, request, *args, **kwargs):
         trip_id = self.kwargs.get('pk')
@@ -100,3 +100,4 @@ class RemoveAccommodationFromTripView(APIView):
 
         except (Trip.DoesNotExist, Accommodation.DoesNotExist) as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
+"""

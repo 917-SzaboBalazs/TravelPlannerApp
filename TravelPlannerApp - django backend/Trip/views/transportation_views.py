@@ -41,7 +41,7 @@ class RetrieveUpdateDestroyTransportationView(RetrieveUpdateDestroyAPIView):
             "depth": 1 if self.request.method == "GET" else 0,
         }
 
-
+"""
 class ListAddTransportationView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -100,3 +100,4 @@ class RemoveTransportationFromTripView(APIView):
 
         except (Trip.DoesNotExist, Transportation.DoesNotExist) as dne:
             return Response(data={"detail": str(dne)}, status=status.HTTP_404_NOT_FOUND)
+"""
