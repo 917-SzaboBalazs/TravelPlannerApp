@@ -1,8 +1,13 @@
-import { Container, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { CircularProgress, Container, Typography } from '@mui/material';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../../../axios';
+import { toast } from 'react-toastify';
+
 
 const AvgDurationOfTrips = () => {
+
+    const dataFetchedRef = useRef(false);
+    const [loading, setLoading] = useState(true);
 
     const [data, setData] = useState({
         'number_of_trips': 0,
@@ -14,15 +19,24 @@ const AvgDurationOfTrips = () => {
             .get('/reports/avg_duration_of_trips_in_days/')
             .then((res) => {
                 setData(res.data);
+                setLoading(false);
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.response.data.detail);
             })
     };
 
     useEffect(() => {
+        if (dataFetchedRef.current) return;
+        dataFetchedRef.current = true;
+
         LoadData();
     }, []);
+
+    if (loading)
+    {
+        return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
+    }
 
     return (
       <>

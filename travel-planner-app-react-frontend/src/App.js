@@ -11,10 +11,24 @@ import EditTrip from './pages/trip/editTrip/EditTrip';
 import DeleteTripConfirmation from './pages/trip/deleteTrip/DeleteTrip';
 import AvgDurationOfTrips from './pages/reports/AvgDurationOfTrips/AvgDurationOfTrips'
 import Reports from './pages/reports/Reports';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <>
+      <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+      />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Layout />}>

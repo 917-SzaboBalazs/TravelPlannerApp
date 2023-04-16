@@ -1,12 +1,15 @@
 import { Typography, Button, CircularProgress } from '@mui/material';
 import { Box, Container } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
 import { useNavigate } from "react-router-dom";
+import { toast } from 'react-toastify';
+
 
 const TripDetails = () => {
 
+    const dataFetchedRef = useRef(false);
     const navigate = useNavigate();
 
     const [loading, setLoading] = useState(true);
@@ -32,13 +35,16 @@ const TripDetails = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                navigate('/404')
+                toast.error(err.response.data.detail);
             });
 
         return true;
     };
 
     useEffect(() => {
+        if (dataFetchedRef.current) return;
+        dataFetchedRef.current = true;
+
         LoadTrip();
     }, []);
 

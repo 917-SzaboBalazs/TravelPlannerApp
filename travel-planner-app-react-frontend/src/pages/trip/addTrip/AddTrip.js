@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../axios';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
+import { toast } from 'react-toastify';
 
 
 const AddTrip = () => {
@@ -36,7 +37,7 @@ const AddTrip = () => {
                     setAccommodations(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -55,7 +56,7 @@ const AddTrip = () => {
                     setTransportations(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -73,7 +74,7 @@ const AddTrip = () => {
                     setActivities(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -84,6 +85,11 @@ const AddTrip = () => {
 
     const validateFormData = () => {
         const errorMessages = [];
+
+        if (name == null || name.length == 0)
+        {
+            errorMessages.push({"field": "name", "detail": "Name is required."});
+        }
 
         if (name.length > 60)
         {
@@ -102,7 +108,7 @@ const AddTrip = () => {
     
             if (startDateObject > endDateObject)
             {
-                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal to start date."});
+                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal then start date."});
             }
         }
 
@@ -141,7 +147,7 @@ const AddTrip = () => {
 
         if (errorMessages.length > 0)
         {
-            console.log(errorMessages);
+            toast.error(errorMessages[0].detail);
             return;
         }
         
@@ -159,14 +165,16 @@ const AddTrip = () => {
             })
             .then(() => {
                 navigate("/trips/");
+                toast.success("Trip has been created successfully.");
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.response.data.detail);
             });
     };
 
     const handleReset = (event) => {
         event.preventDefault();
+        toast.info("Cleared");
 
         setName("");
         setDestination("");
@@ -190,7 +198,7 @@ const AddTrip = () => {
         <form onSubmit={handleSubmit} onReset={handleReset}>
             <Container maxWidth="md" >
                 <p>Name*</p>
-                <Input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} fullWidth required />
+                <Input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
 
                 <p>Destination</p>
                 <Input type="text" name="destination" value={destination} onChange={(e) => setDestination(e.target.value)} fullWidth />

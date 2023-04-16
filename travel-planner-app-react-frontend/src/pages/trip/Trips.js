@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
 import { Button, CircularProgress, Pagination, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
+import { toast } from 'react-toastify';
 
 
 const Trips = () => {
 
+  const dataFetchedRef = useRef(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
@@ -119,13 +121,15 @@ const Trips = () => {
     })
       .catch((err) => {
 
-        alert(err);
+        toast.error(err.response.data.detail);
 
     });
 
   });
 
   useEffect(() => {
+    if (dataFetchedRef.current) return;
+    dataFetchedRef.current = true;
 
     LoadTrips();
 

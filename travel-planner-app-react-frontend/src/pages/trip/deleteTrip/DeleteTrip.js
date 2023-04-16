@@ -1,11 +1,13 @@
 import { Button, CircularProgress, Container, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
+import { toast } from 'react-toastify';
 
 const DeleteTripConfirmation = () => {
 
+    const dataFetchedRef = useRef(false);
     const [loading, setLoading] = useState(true);
 
     const [name, setName] = useState("");
@@ -20,11 +22,14 @@ const DeleteTripConfirmation = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                navigate('/404')
+              toast.error(err.response.data.detail);
             })
     };
 
     useEffect(() => {
+        if (dataFetchedRef.current) return;
+        dataFetchedRef.current = true;
+
         LoadTripName();
     });
 
@@ -36,10 +41,11 @@ const DeleteTripConfirmation = () => {
           .then((res) => {
             
             navigate('/trips/');
+            toast.success("Trip has been deleted successfully.");
     
           })
           .catch((err) => {
-            alert(err);
+            toast.error(err.response.data.detail);
           });
     
           

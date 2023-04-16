@@ -1,11 +1,13 @@
 import { TextField, Button, Container, Input, Typography, CircularProgress } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../../axios';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete'
+import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { toast } from 'react-toastify';
 
 const EditTrip = () => {
 
+    const dataFetchedRef = useRef(false);
     const [loading, setLoading] = useState(true);
 
     const [name, setName] = useState("");
@@ -32,7 +34,6 @@ const EditTrip = () => {
         axiosInstance
             .get('/trips/' + tripId + '/')
             .then((res) => {
-                console.log(res.data);
                 setName(res.data.name);
                 setDestination(res.data.destination);
                 setStartDate(res.data.start_date);
@@ -47,7 +48,7 @@ const EditTrip = () => {
                 setLoading(false);
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.response.data.detail);
             });
     };
 
@@ -61,7 +62,7 @@ const EditTrip = () => {
                     setAccommodations(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -80,7 +81,7 @@ const EditTrip = () => {
                     setTransportations(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -98,7 +99,7 @@ const EditTrip = () => {
                     setActivities(res.data.results);
                 })
                 .catch((err) => {
-                    alert(err);
+                    toast.error(err.response.data.detail);
                 });
         }
         else
@@ -108,18 +109,26 @@ const EditTrip = () => {
     };
 
     useEffect(() => {
+        if (dataFetchedRef.current) return;
+        dataFetchedRef.current = true;
+
         LoadTrip();
     }, []);
 
     const validateFormData = () => {
         const errorMessages = [];
 
-        if (name != null && name.length > 60)
+        if (name == null || name.length == 0)
+        {
+            errorMessages.push({"field": "name", "detail": "Name is required."});
+        }
+
+        if (name.length > 60)
         {
             errorMessages.push({"field": "name", "detail": "Maxiumum allowed length is 60 characters."});
         }
 
-        if (destination != null && destination.length > 60)
+        if (destination.length > 60)
         {
             errorMessages.push({"field": "destination", "detail": "Maxiumum allowed length is 60 characters."});
         }
@@ -131,16 +140,16 @@ const EditTrip = () => {
     
             if (startDateObject > endDateObject)
             {
-                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal to start date."});
+                errorMessages.push({"field": "endDate", "detail": "End date must be bigger or equal then start date."});
             }
         }
 
-        if (budget != null && budget < 0.)
+        if (budget < 0.)
         {
             errorMessages.push({"field": "budget", "detail": "Budget must be a non-negative number."});
         }
 
-        if (notes != null && notes.length > 500)
+        if (notes.length > 500)
         {
             errorMessages.push({"field": "notes", "detail": "Maxiumum allowed length is 500 characters."});
         }
@@ -170,7 +179,7 @@ const EditTrip = () => {
 
         if (errorMessages.length > 0)
         {
-            console.log(errorMessages);
+            toast.error(errorMessages[0].detail);
             return;
         }
         
@@ -188,14 +197,16 @@ const EditTrip = () => {
             })
             .then(() => {
                 navigate('/trips/' + tripId + '/');
+                toast.success("Trip has been edited successfully.");
             })
             .catch((err) => {
-                alert(err);
+                toast.error(err.response.data.detail);
             });
     };
 
     const handleReset = (event) => {
         event.preventDefault();
+        toast.info("Cleared");
 
         setName("");
         setDestination("");
@@ -224,7 +235,7 @@ const EditTrip = () => {
         <form onSubmit={handleSubmit} onReset={handleReset}>
             <Container maxWidth="md" >
                 <p>Name*</p>
-                <Input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} fullWidth required />
+                <Input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} fullWidth />
 
                 <p>Destination</p>
                 <Input type="text" name="destination" value={destination} onChange={(e) => setDestination(e.target.value)} fullWidth />
