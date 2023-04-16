@@ -118,6 +118,7 @@ const Trips = () => {
         
         setLoading(false);
         setPageLoading(false);
+        dataFetchedRef.current = false;
     })
       .catch((err) => {
 
