@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from pathlib import Path
 import environ
 
+
 env = environ.Env()
 environ.Env.read_env()
 
@@ -142,7 +143,8 @@ CORS_ALLOWED_ORIGINS = [
     "https://plan-your-travel.netlify.app",
 ]
 
+
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 100
+    'DEFAULT_PAGINATION_CLASS': 'TravelPlannerApp.pagination.CustomPagination',
+    'PAGE_SIZE': 20
 }

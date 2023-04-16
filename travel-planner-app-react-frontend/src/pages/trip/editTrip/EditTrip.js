@@ -59,7 +59,7 @@ const EditTrip = () => {
             axiosInstance
                 .get('accommodations/?name_starts_with=' + accommodationFilter + "&&length=5")
                 .then((res) => {
-                    setAccommodations(res.data.results);
+                    setAccommodations(res.data);
                 })
                 .catch((err) => {
                     toast.error(err.response.data.detail);
@@ -78,7 +78,7 @@ const EditTrip = () => {
             axiosInstance
                 .get('transportations/?name_starts_with=' + transportationFilter + "&&length=5")
                 .then((res) => {
-                    setTransportations(res.data.results);
+                    setTransportations(res.data);
                 })
                 .catch((err) => {
                     toast.error(err.response.data.detail);
@@ -96,7 +96,7 @@ const EditTrip = () => {
             axiosInstance
                 .get('activities/?name_starts_with=' + activityFilter + "&&length=5")
                 .then((res) => {
-                    setActivities(res.data.results);
+                    setActivities(res.data);
                 })
                 .catch((err) => {
                     toast.error(err.response.data.detail);

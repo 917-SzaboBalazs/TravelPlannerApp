@@ -15,7 +15,6 @@ const Trips = () => {
   const [loading, setLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
 
-  const [count, setCount] = useState(0);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
   const [data, setData] = useState([]);
@@ -87,34 +86,21 @@ const Trips = () => {
       }}
   ];
 
-  const handlePageChange = ((event) => {
-    var pageNumber = 0;
+  const handlePageChange = ((_, value) => {
     setPageLoading(true);
-
-    if (event.target.dataset.testid === "NavigateNextIcon")
-    {
-      pageNumber = page + 1;
-    }
-    else if (event.target.dataset.testid === "NavigateBeforeIcon")
-    {
-      pageNumber = page - 1;
-    }
-    else
-    {
-      pageNumber = parseInt(event.target.outerText)
-    }
-
-    setPage(pageNumber);
+    setPage(value);
   })
 
   const LoadTrips = (() => {
+
+    const limit = 20;
+    const offset = (page - 1) * limit;
     
     axiosInstance
-      .get('trips/?page=' + page)
+      .get('trips/?limit=' + limit + "&&offset=" + offset)
       .then((res) => {
-        setCount(res.data.count);
-        setData(res.data.results);
-        calcAvgBudget(res.data.results);
+        setData(res.data);
+        calcAvgBudget(res.data);
         
         setLoading(false);
         setPageLoading(false);
@@ -125,7 +111,6 @@ const Trips = () => {
         toast.error(err.response.data.detail);
 
     });
-
   });
 
   useEffect(() => {
@@ -183,7 +168,7 @@ const Trips = () => {
         }
 
         <Pagination
-          count={Math.ceil(count / pageSize)}
+          count={999999}
           page={page}
           onChange={handlePageChange}
           color='primary'

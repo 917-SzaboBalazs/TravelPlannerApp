@@ -40,3 +40,8 @@
     display: flex;
     justify-content: center;
 }
+
+.pagination li:nth-last-child(2)
+{
+    display: none;
+}
