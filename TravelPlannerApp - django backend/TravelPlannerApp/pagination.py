@@ -8,4 +8,4 @@ class CustomPagination(LimitOffsetPagination):
         return Response(data=data, status=status.HTTP_200_OK)
 
     def get_count(self, queryset):
-        return 99999999
+        return 999999999

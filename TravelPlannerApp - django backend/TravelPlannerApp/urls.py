@@ -21,6 +21,7 @@ from rest_framework_swagger.views import get_swagger_view
 
 urlpatterns = [
     path('', include('Trip.urls'), name="trips"),
+    path('__debug__/', include('debug_toolbar.urls')),
 
     path('admin/', admin.site.urls),
     path('openapi/', get_schema_view(title="Travel Planner App API"), name="openapi"),

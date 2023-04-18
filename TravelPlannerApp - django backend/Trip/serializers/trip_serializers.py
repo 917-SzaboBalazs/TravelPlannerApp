@@ -6,21 +6,12 @@ from Trip.serializers.custom_model_serializers import CustomModelSerializer
 
 class ListTripSerializer(CustomModelSerializer):
 
-    number_of_accommodations = serializers.SerializerMethodField()
-    number_of_transportations = serializers.SerializerMethodField()
-    number_of_activities = serializers.SerializerMethodField()
+    number_of_accommodations = serializers.IntegerField(read_only=True)
+    number_of_transportations = serializers.IntegerField(read_only=True)
+    number_of_activities = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Trip
-
-    def get_number_of_accommodations(self, obj):
-        return obj.accommodations.count()
-
-    def get_number_of_transportations(self, obj):
-        return obj.transportations.count()
-
-    def get_number_of_activities(self, obj):
-        return obj.activities.count()
 
     def validate(self, data):
 

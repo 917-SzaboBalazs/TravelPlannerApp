@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'rest_framework',
     'rest_framework_swagger',
     'corsheaders',
@@ -58,6 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'TravelPlannerApp.urls'
@@ -146,5 +148,13 @@ CORS_ALLOWED_ORIGINS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'TravelPlannerApp.pagination.CustomPagination',
-    'PAGE_SIZE': 20
+    'PAGE_SIZE': 20,
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'TravelPlannerApp.renderers.OnlyRawBrowsableAPIRenderer',
+    ],
 }
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
