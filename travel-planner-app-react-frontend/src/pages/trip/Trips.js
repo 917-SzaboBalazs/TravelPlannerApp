@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Button, CircularProgress, Pagination, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, InputLabel, MenuItem, Pagination, Select, Typography } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
 import { toast } from 'react-toastify';
@@ -22,6 +22,10 @@ const Trips = () => {
     "avgBudget": 0,
     "nameOfLongestTrip": "",
   });
+  const [action, setAction] = useState(0);
+  const [selected, setSelected] = useState([]);
+
+  const [openDialog, setOpenDialog] = useState(false);
 
   const calcAvgBudget = (data) => {
     var totalBudget = 0.;
@@ -53,15 +57,16 @@ const Trips = () => {
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
-    { field: 'name', headerName: 'Name', width: 350, 
+    { field: 'name', headerName: 'Name', width: 500, 
       renderCell: (params) => (
       <Link to={`${params.id}/`} className='details-link'>{params.value}</Link>
     )
     },
-    { field: 'destination', headerName: 'Destination', width: 150 },
-    { field: 'start_date', headerName: 'Start Date', width: 100 },
-    { field: 'end_date', headerName: 'End Date', width: 100 },
-    { field: 'budget', headerName: 'Budget', width: 80 },
+    { field: 'username', headerName: 'User', width: 200,
+      renderCell : (params) => (
+        <Link to={`/user/${params.row.user_id}`} className='details-link'>{params.value}</Link>
+      )
+    },
     { field: 'number_of_accommodations', headerName: 'Accommodations', width: 130 },
     { field: 'number_of_transportations', headerName: 'Transportations', width: 130 },
     { field: 'number_of_activities', headerName: 'Activities', width: 130 },
@@ -108,10 +113,50 @@ const Trips = () => {
     })
       .catch((err) => {
 
+        console.log(err);
         toast.error(err.response.data.detail);
 
     });
   });
+
+  const handleActionsOnClick = () => {
+    setOpenDialog(false);
+
+    if (action === 1) {
+      if (selected.length === 0) {
+        toast.warning('Please select items to delete!');
+        return;
+      }
+      else
+      {
+        handleOpenDialog();
+      }
+    }
+  };
+
+  const handleBulkDelete = () => {
+    axiosInstance
+      .delete('/trips/bulk_delete/', { data: { ids: selected } })
+      .then((res) => {
+        setSelected([]);
+        setAction(0);
+        toast.success('Items have been deleted successfully!');
+        LoadTrips();
+        setOpenDialog(false);
+      })
+      .catch((err) => {
+        toast.error(err.response.data.detail);
+        setOpenDialog(false);
+      });
+  }
+
+  const handelSelectionChange = ((newSelection) => {
+    setSelected(newSelection, ...selected);
+  });
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -128,7 +173,20 @@ const Trips = () => {
 
   return (
     <>
-      <Container maxWidth="xl" sx={{ height: '100%'}}>
+      <Container maxWidth="xl" sx={{ height: '100%', position: 'relative'}}>
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Are you sure you want to delete?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action cannot be undone.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleBulkDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
         
         <Typography variant="h3" align="center" sx={{ m: 2 }} >
           Trips
@@ -137,6 +195,27 @@ const Trips = () => {
         <Button variant="contained" size="large" className="trips-add-button">
           <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
         </Button>
+
+        <Box className="actions-container">
+        <FormControl sx={{ m: 2, width: '200px' }}>
+          <InputLabel id="actions-label">Actions</InputLabel>
+          <Select
+            labelId="actions-label"
+            id="actions"
+            label="Actions"
+            value={action}
+            onChange={(event) => setAction(event.target.value)}
+          >
+            <MenuItem value={1}>Delete Selected</MenuItem>
+          </Select>
+        </FormControl>
+
+          <Button 
+            variant="contained" sx={{ height: '40px', width: '70px' }}
+            onClick={handleActionsOnClick}
+          >
+            Go</Button>
+        </Box>
 
         {!pageLoading ?
           <DataGrid sx={{ height: '600px' }}
@@ -153,6 +232,9 @@ const Trips = () => {
                 <></>
               ),
             }}
+            checkboxSelection
+            disableRowSelectionOnClick
+            onRowSelectionModelChange={handelSelectionChange} 
           />
           :
           <DataGrid sx={{ height: '600px' }}
@@ -166,6 +248,7 @@ const Trips = () => {
               }}
             />
         }
+
 
         <Pagination
           count={999999}

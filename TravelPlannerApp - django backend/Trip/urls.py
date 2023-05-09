@@ -5,11 +5,14 @@ from Trip.views.report_views import AverageDurationOfTripsInDaysView, TripsTotal
 from Trip.views.activity_views import ListCreateActivityView, RetrieveUpdateDestroyActivityView
 from Trip.views.transportation_views import ListCreateTransportationView, RetrieveUpdateDestroyTransportationView
 from Trip.views.accommodation_views import ListCreateAccommodationView, RetrieveUpdateDestroyAccommodationView
-from Trip.views.trip_views import ListCreateTripView, RetrieveUpdateDestroyTripView
+from Trip.views.trip_views import ListCreateTripView, RetrieveUpdateDestroyTripView, BulkDeleteTripsByIDsView
+from Trip.views.profile_views import UserProfileView
+from Trip.views.user_views import ListUsersView, UpdateUserView
 
 urlpatterns = [
     path('trips/', ListCreateTripView.as_view(), name="trip_list"),
     path('trips/<int:pk>/', RetrieveUpdateDestroyTripView.as_view(), name="trip_details"),
+    path('trips/bulk_delete/', BulkDeleteTripsByIDsView.as_view(), name="bulk_delete_trips"),
 
     path('accommodations/', ListCreateAccommodationView.as_view(), name="accommodation_list"),
     path('accommodations/<int:pk>/', RetrieveUpdateDestroyAccommodationView.as_view(), name="accommodation_details"),
@@ -27,5 +30,10 @@ urlpatterns = [
     path('reports/trips_based_on_average_comfort_of_transportations/',
          SortTripsBasedOnAverageComfortOfTransportations.as_view(),
          name="trips_based_on_average_comfort_of_transportations"),
+
+    path('users/<int:pk>/profile/', UserProfileView.as_view(), name="user_profile_view"),
+
+    path('users/', ListUsersView.as_view(), name="list_users_view"),
+    path('users/<int:pk>/', UpdateUserView.as_view(), name="update_user_view"),
 ]
 

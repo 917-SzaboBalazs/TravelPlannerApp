@@ -9,6 +9,7 @@ class ListTripSerializer(CustomModelSerializer):
     number_of_accommodations = serializers.IntegerField(read_only=True)
     number_of_transportations = serializers.IntegerField(read_only=True)
     number_of_activities = serializers.IntegerField(read_only=True)
+    username = serializers.CharField(read_only=True)
 
     class Meta:
         model = Trip

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 from Trip.models.accommodation import Accommodation
 from Trip.models.activity import Activity
@@ -27,6 +28,7 @@ class Trip(models.Model):
     activities = models.ManyToManyField(to=Activity, blank=True)
     transportations = models.ManyToManyField(to=Transportation, blank=True)
     notes = models.CharField(max_length=500, blank=True, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='users')
 
     def __str__(self):
         return self.name + " (" + self.destination + " | " + str(self.start_date) + " - " + str(self.end_date) + ")"

@@ -184,7 +184,7 @@ const EditTrip = () => {
         }
         
         axiosInstance
-            .put('trips/' + tripId + '/', {
+            .patch('trips/' + tripId + '/', {
                 name,
                 destination,
                 start_date: startDate,

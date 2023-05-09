@@ -19,6 +19,13 @@ from django.views.generic import TemplateView
 from rest_framework.schemas import get_schema_view
 from rest_framework_swagger.views import get_swagger_view
 
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+
+from Trip.views.profile_views import RegisterView, ActivateAccountView
+
 urlpatterns = [
     path('', include('Trip.urls'), name="trips"),
     path('__debug__/', include('debug_toolbar.urls')),
@@ -29,4 +36,10 @@ urlpatterns = [
         template_name='docs.html',
         extra_context={'schema_url': 'openapi'}
     ), name='swagger-ui'),
+
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/register/', RegisterView.as_view(), name="register_view"),
+    path('api/register/confirm/<str:confirmation_code>/', ActivateAccountView.as_view(), name="activate_account_view",)
 ]

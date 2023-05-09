@@ -11,8 +11,14 @@ import EditTrip from './pages/trip/editTrip/EditTrip';
 import DeleteTripConfirmation from './pages/trip/deleteTrip/DeleteTrip';
 import AvgDurationOfTrips from './pages/reports/AvgDurationOfTrips/AvgDurationOfTrips'
 import Reports from './pages/reports/Reports';
+import Profile from './pages/profile/Profile';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Register from './pages/register/Register';
+import ActivateAccount from './pages/register/ActivateAccount';
+import Login from './pages/login/Login';
+import Users from './pages/admin/users/users';
+import Admin from './pages/admin/admin';
 
 function App() {
   return (
@@ -47,6 +53,22 @@ function App() {
               <Route index element={<Reports />} />
               <Route path="average-duration-of-trips-in-days/" element={<AvgDurationOfTrips />} />
 
+            </Route>
+
+            <Route path="user/:userId/" element={<Profile />} />
+
+            <Route path="register/">
+              <Route index element={<Register />} />
+              <Route path="confirm/:code/" element={<ActivateAccount />} />
+            </Route>
+            
+            <Route path="login/" element={<Login />} />
+
+            <Route path="admin/">
+              <Route index element={<Admin />} />
+              <Route path="users/">
+                <Route index element={<Users />} />
+              </Route>
             </Route>
             
             <Route path="*" element={<Page404 />} />

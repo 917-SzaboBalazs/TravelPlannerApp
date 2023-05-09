@@ -1,0 +1,23 @@
+.admin-list > li {
+    text-align: center;
+}
+
+.admin-list > li > a {
+    display: block;
+    padding: 20px 0;
+    text-decoration: none;
+    color: black;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    letter-spacing: 1px;
+    transition: all 0.3s;
+}
+
+.admin-list > li > a:hover {
+    letter-spacing: 2px;
+
+}
+
+.admin-list > li > a:nth-child(2n + 1) {
+    background-color: lightgray;
+}
