@@ -6,6 +6,7 @@ import { Box, Button, CircularProgress, Dialog, DialogActions, DialogContent, Di
 import { Link, useNavigate } from "react-router-dom";
 import './trips.css'
 import { toast } from 'react-toastify';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 
 const Trips = () => {
@@ -26,6 +27,8 @@ const Trips = () => {
   const [selected, setSelected] = useState([]);
 
   const [openDialog, setOpenDialog] = useState(false);
+
+  const mobile = useMediaQuery('(max-width: 900px)');
 
   const calcAvgBudget = (data) => {
     var totalBudget = 0.;
@@ -54,6 +57,14 @@ const Trips = () => {
       "nameOfLongestTrip": nameOfLongestTrip,
     })
   }
+
+  const mobileColumns = [
+    { field: 'name', headerName: 'Name', width: 300, 
+      renderCell: (params) => (
+      <Link to={`${params.id}/`} className='details-link'>{params.value}</Link>
+    )
+    },
+  ];
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -171,6 +182,8 @@ const Trips = () => {
       return <CircularProgress style={{ position: 'fixed', top: '50%', left: '50%', translate: '-50%' }}/>
   }
 
+
+
   return (
     <>
       <Container maxWidth="xl" sx={{ height: '100%', position: 'relative'}}>
@@ -188,54 +201,110 @@ const Trips = () => {
         </DialogActions>
       </Dialog>
         
-        <Typography variant="h3" align="center" sx={{ m: 2 }} >
-          Trips
-        </Typography>
+        {!mobile ?
+          <>
+            <Typography variant="h3" align="center" sx={{ m: 2 }} >
+              Trips
+            </Typography>
 
-        <Button variant="contained" size="large" className="trips-add-button">
-          <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
-        </Button>
+            <Button variant="contained" size="large" className="trips-add-button">
+              <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
+            </Button>
 
-        <Box className="actions-container">
-        <FormControl sx={{ m: 2, width: '200px' }}>
-          <InputLabel id="actions-label">Actions</InputLabel>
-          <Select
-            labelId="actions-label"
-            id="actions"
-            label="Actions"
-            value={action}
-            onChange={(event) => setAction(event.target.value)}
-          >
-            <MenuItem value={1}>Delete Selected</MenuItem>
-          </Select>
-        </FormControl>
+            <Box className="actions-container">
+            <FormControl sx={{ m: 2, width: '200px' }}>
+              <InputLabel id="actions-label">Actions</InputLabel>
+              <Select
+                labelId="actions-label"
+                id="actions"
+                label="Actions"
+                value={action}
+                onChange={(event) => setAction(event.target.value)}
+              >
+                <MenuItem value={1}>Delete Selected</MenuItem>
+              </Select>
+            </FormControl>
 
-          <Button 
-            variant="contained" sx={{ height: '40px', width: '70px' }}
-            onClick={handleActionsOnClick}
-          >
-            Go</Button>
-        </Box>
+              <Button 
+                variant="contained" sx={{ height: '40px', width: '70px' }}
+                onClick={handleActionsOnClick}
+              >
+                Go</Button>
+            </Box>
+          </>
+        : 
+        <>
+          <Typography variant="h3" align="center" sx={{ m: 2 }} >
+            Trips
+          </Typography>
+
+          <Button variant="contained" size="large" sx={{ width: '250px', display: 'block', margin: '0 auto' }}>
+            <Link to="/trips/add/" className='add-link'>+ Add Trip</Link>
+          </Button>
+
+          <Box sx={{ display: 'flex', justifyContent: 'center' , alignItems: 'center' }}>
+            <FormControl sx={{ m: 2, width: '75%' }}>
+              <InputLabel id="actions-label">Actions</InputLabel>
+              <Select
+                labelId="actions-label"
+                id="actions"
+                label="Actions"
+                value={action}
+                onChange={(event) => setAction(event.target.value)}
+              >
+                <MenuItem value={1}>Delete Selected</MenuItem>
+              </Select>
+            </FormControl>
+
+            <Button 
+              variant="contained" sx={{ height: '40px', width: '70px' }}
+              onClick={handleActionsOnClick}
+            >
+              Go</Button>
+          </Box>
+        </>
+        }
 
         {!pageLoading ?
-          <DataGrid sx={{ height: '600px' }}
-            rows={data}
-            columns={columns}
-            initialState={{
-              sorting: {
-                sortModel: [{ field: 'id', sort: 'desc' }],
-              },
-            }}
-            hideFooter
-            components={{
-              NoRowsOverlay: () => (
-                <></>
-              ),
-            }}
-            checkboxSelection
-            disableRowSelectionOnClick
-            onRowSelectionModelChange={handelSelectionChange} 
-          />
+          !mobile ?
+            <DataGrid sx={{ height: '600px' }}
+              rows={data}
+              columns={columns}
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'id', sort: 'desc' }],
+                },
+              }}
+              hideFooter
+              components={{
+                NoRowsOverlay: () => (
+                  <></>
+                ),
+              }}
+              checkboxSelection
+              disableRowSelectionOnClick
+              onRowSelectionModelChange={handelSelectionChange} 
+            />
+            :
+            <DataGrid
+              rows={data}
+              columns={mobileColumns}
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'id', sort: 'desc' }],
+                },
+              }}
+              hideFooter
+              components={{
+                NoRowsOverlay: () => (
+                  <></>
+                ),
+              }}
+              autoHeight
+              checkboxSelection
+              disableRowSelectionOnClick
+              onRowSelectionModelChange={handelSelectionChange} 
+            />
           :
           <DataGrid sx={{ height: '600px' }}
               rows={[]}
@@ -254,10 +323,11 @@ const Trips = () => {
           count={999999}
           page={page}
           onChange={handlePageChange}
+          size='small'
           color='primary'
           variant='outlined'
           className='pagination'
-          siblingCount={2}
+          siblingCount={1}
           boundaryCount={1}
         />
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axiosInstance from '../../../axios';
 import { DataGrid } from '@mui/x-data-grid';
 import Container from '@mui/material/Container';
-import { Button, Checkbox, CircularProgress, Pagination, Typography } from '@mui/material';
+import { Button, Checkbox, CircularProgress, Pagination, Typography, useMediaQuery } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from 'react-toastify';
 
@@ -17,6 +17,35 @@ const Users = () => {
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(100);
+  const mobile = useMediaQuery('(max-width: 900px)');
+
+  const mobileColumns = [
+    { field: 'username', headerName: 'Username', width: 100 },
+    { field: 'is_superuser', headerName: 'Admin', width: 60,
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.value}
+          onChange={() => handleCheckboxChange(params.id, 'is_superuser', !params.value, setData)}
+        />
+      )
+    },
+    { field: 'is_staff', headerName: 'Moderator', width: 60,
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.value}
+          onChange={() => handleCheckboxChange(params.id, 'is_staff', !params.value, setData)}
+        />
+      )
+    },
+    { field: 'is_active', headerName: 'Active', width: 60,
+      renderCell: (params) => (
+        <Checkbox
+          checked={params.value}
+          onChange={() => handleCheckboxChange(params.id, 'is_active', !params.value, setData)}
+        />
+      )
+    },
+  ];
 
   const columns = [
     { field: 'id', headerName: 'ID', width: 100 },
@@ -117,21 +146,40 @@ const Users = () => {
         </Typography>
 
         {!pageLoading ?
-          <DataGrid sx={{ height: '600px' }}
-            rows={data}
-            columns={columns}
-            initialState={{
-              sorting: {
-                sortModel: [{ field: 'id', sort: 'desc' }],
-              },
-            }}
-            hideFooter
-            components={{
-              NoRowsOverlay: () => (
-                <></>
-              ),
-            }}
-          />
+          !mobile ?
+            <DataGrid sx={{ height: '600px' }}
+              rows={data}
+              columns={columns}
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'id', sort: 'desc' }],
+                },
+              }}
+              hideFooter
+              components={{
+                NoRowsOverlay: () => (
+                  <></>
+                ),
+              }}
+            />
+            :
+            <DataGrid
+              rows={data}
+              columns={mobileColumns}
+              initialState={{
+                sorting: {
+                  sortModel: [{ field: 'id', sort: 'desc' }],
+                },
+              }}
+              autoHeight
+              hideFooter
+              components={{
+                NoRowsOverlay: () => (
+                  <></>
+                ),
+              }}
+            />
+            
           :
           <DataGrid sx={{ height: '600px' }}
               rows={[]}
@@ -149,10 +197,11 @@ const Users = () => {
           count={999999}
           page={page}
           onChange={handlePageChange}
+          size='small'
           color='primary'
           variant='outlined'
           className='pagination'
-          siblingCount={2}
+          siblingCount={1}
           boundaryCount={1}
         />
 
