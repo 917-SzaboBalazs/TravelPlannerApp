@@ -19,6 +19,7 @@ import ActivateAccount from './pages/register/ActivateAccount';
 import Login from './pages/login/Login';
 import Users from './pages/admin/users/users';
 import Admin from './pages/admin/admin';
+import Chat from './pages/chat/Chat';
 
 function App() {
   return (
@@ -70,9 +71,11 @@ function App() {
                 <Route index element={<Users />} />
               </Route>
             </Route>
+
+            <Route path="chat/" element={<Chat />} />
             
             <Route path="*" element={<Page404 />} />
-          </Route>
+          </Route> 
         </Routes>
       </BrowserRouter>
     </>

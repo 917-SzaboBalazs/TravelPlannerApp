@@ -187,6 +187,30 @@ const AddTrip = () => {
         setSelectedActivities([]);
     };
 
+    const handleBudgetPrediction = () => {
+        if (destination == "" || startDate == undefined || endDate == undefined)
+        {
+            toast.error("Please fill the destination, start date end date date columns");
+            return;
+        }
+
+        axiosInstance
+            .get('predict-budget/', {
+                params: {
+                    destination: destination,
+                    start_date: startDate,
+                    end_date: endDate
+                }
+            })
+            .then(response => {
+                setBudget(response.data.predicted_budget);
+                toast.info("Predicted budget has been loaded successfully!");
+            })
+            .catch(error => {
+                toast.error(error.response.data);
+            });
+    }
+
     return (
         <>
         <Container maxWidth="xl" sx={{ height: '100%' }}>
@@ -210,7 +234,16 @@ const AddTrip = () => {
                 <Input type="date" name="end_date" value={endDate ? endDate : ""} onChange={(e) => setEndDate(e.target.value)} fullWidth />
 
                 <p>Budget</p>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Input type="number" name="budget" value={budget ? budget : ""} onChange={(e) => setBudget(e.target.value)} fullWidth />
+                <Button
+                    variant='contained'
+                    onClick={handleBudgetPrediction}
+                    style={{ marginLeft: '10px' }}
+                >
+                    Predict
+                </Button>
+                </div>
 
                 <p>Notes</p>
                 <textarea name="notes" rows="10" value={notes} onChange={(e) => setNotes(e.target.value)} style={{width: '100%'}} />

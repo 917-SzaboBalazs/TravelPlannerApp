@@ -1,11 +1,18 @@
+import os
+
+import torch
+import pandas as pd
 from django.db.models import Count, F
 from rest_framework import status, serializers
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView, DestroyAPIView
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from sklearn.preprocessing import StandardScaler
+from torch import nn
+import pickle
 
 from Trip.models.trip import Trip
 from Trip.serializers.trip_serializers import TripSerializer, ListTripSerializer
-from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from TravelPlannerApp.permissions import IsOwnerOrReadOnly, IsModeratorUser, IsAdminUser
 
@@ -91,3 +98,72 @@ class BulkDeleteTripsByIDsView(DestroyAPIView):
                 pass
 
         return SerializerClass
+
+
+# Get the directory path of the current view file
+current_directory = os.path.dirname(os.path.abspath(__file__))
+
+
+# Define the deep learning model
+class BudgetPredictor(nn.Module):
+    def __init__(self):
+        super(BudgetPredictor, self).__init__()
+        self.fc1 = nn.Linear(2, 16)
+        self.fc2 = nn.Linear(16, 8)
+        self.fc3 = nn.Linear(8, 1)
+        self.relu = nn.ReLU()
+
+    def forward(self, x):
+        x = self.relu(self.fc1(x))
+        x = self.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+
+# Create a new class-based view that inherits from `APIView`
+class BudgetPredictionView(APIView):
+    def get(self, request):
+        # Load the saved model
+        model_path = os.path.join(current_directory, 'budget_predictor_model.pth')
+        state_dict = torch.load(model_path)
+
+        # Recreate the model instance
+        model = BudgetPredictor()
+        model.load_state_dict(state_dict)
+        model.eval()
+
+        # Retrieve the input parameters from the request query parameters
+        destination = request.GET.get('destination')
+        start_date = pd.to_datetime(request.GET.get('start_date'))
+        end_date = pd.to_datetime(request.GET.get('end_date'))
+
+        # Preprocess the input data
+        # Convert start_date and end_date to numerical values (days since the earliest date)
+        earliest_date = pd.to_datetime('01/01/1970')  # Replace with the earliest date used during training
+        start_date = (start_date - earliest_date).days
+        end_date = (end_date - earliest_date).days
+
+        # Create the input tensor
+        input_tensor = torch.tensor([[start_date, end_date]], dtype=torch.float32)
+
+        # Perform inference
+        with torch.no_grad():
+            predicted_budget = model(input_tensor)
+
+        # Load the scaling parameters
+        scaler_path = os.path.join(current_directory, 'scaler_params.pkl')
+
+        with open(scaler_path, 'rb') as f:
+            scaler_mean, scaler_std = pickle.load(f)
+
+        # Create a new StandardScaler object and set the saved scaling parameters
+        scaler = StandardScaler()
+        scaler.mean_ = scaler_mean
+        scaler.scale_ = scaler_std
+
+        # Cast the predicted budget to an integer
+        predicted_budget = scaler.inverse_transform(predicted_budget.numpy())
+        predicted_budget = int(predicted_budget.item())
+
+        # Return the predicted budget as an integer in the API response
+        return Response({'predicted_budget': predicted_budget})

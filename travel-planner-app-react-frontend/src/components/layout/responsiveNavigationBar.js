@@ -20,6 +20,7 @@ const pages = [
   {'name': 'Login', 'path': '/login/'},
   {'name': 'Register', 'path': '/register/'},
   {'name': 'Admin', 'path': '/admin/'},
+  {'name': 'Chat', 'path': '/chat/'},
 ];
 
 function ResponsiveNavigationBar() {

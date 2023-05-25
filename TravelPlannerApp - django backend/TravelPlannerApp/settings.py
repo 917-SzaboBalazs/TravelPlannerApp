@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_swagger',
     'corsheaders',
+    'channels',
     'Trip',
 ]
 
@@ -81,6 +82,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'TravelPlannerApp.wsgi.application'
+
+ASGI_APPLICATION = "TravelPlannerApp.routing.application" #routing.py will handle the ASGI
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+        }
+    }
 
 
 # Database

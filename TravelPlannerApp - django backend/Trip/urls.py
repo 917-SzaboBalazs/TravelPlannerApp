@@ -5,7 +5,8 @@ from Trip.views.report_views import AverageDurationOfTripsInDaysView, TripsTotal
 from Trip.views.activity_views import ListCreateActivityView, RetrieveUpdateDestroyActivityView
 from Trip.views.transportation_views import ListCreateTransportationView, RetrieveUpdateDestroyTransportationView
 from Trip.views.accommodation_views import ListCreateAccommodationView, RetrieveUpdateDestroyAccommodationView
-from Trip.views.trip_views import ListCreateTripView, RetrieveUpdateDestroyTripView, BulkDeleteTripsByIDsView
+from Trip.views.trip_views import ListCreateTripView, RetrieveUpdateDestroyTripView, BulkDeleteTripsByIDsView, \
+    BudgetPredictionView
 from Trip.views.profile_views import UserProfileView
 from Trip.views.user_views import ListUsersView, UpdateUserView
 
@@ -35,5 +36,7 @@ urlpatterns = [
 
     path('users/', ListUsersView.as_view(), name="list_users_view"),
     path('users/<int:pk>/', UpdateUserView.as_view(), name="update_user_view"),
+
+    path('predict-budget/', BudgetPredictionView.as_view(), name='budget-prediction'),
 ]
 
